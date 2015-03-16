@@ -21,6 +21,7 @@
 	Previous Month
 
 	</button>
+	<label id="MonthName">Month</label>
 	<button id="NextMonth">
 		Next Month
 	</button>
@@ -56,7 +57,44 @@
 	</table>
 </section>
 
+<label>Event: </label><textarea id="Event"></textarea>
+
+
+<label>Month: </label><select id="Month" onchange='updateSelectedMonth(); updateDaySelect();'>
+</select>
+
+<label>Year: </label><input type="number" min="0" step="1" value="2015" id="Year" onchange='updateSelectedMonth(); updateDaySelect();'>
+
+<label>Day: </label><input type="number" min="1" max="7" step="1" value="1" id="Day">
+</select>
+
 <script src="calendarHelper.js"></script>
+
+<script type="text/javascript">
+var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var selectedMonth = new Month(2015, 0);
+for(var i = 0; i < months.length; i++){
+	var opt = document.createElement("option");
+	opt.appendChild(document.createTextNode(months[i]));
+	opt.setAttribute("value", i);
+	document.getElementById("Month").appendChild(opt);
+}
+document.getElementById("Month").value = 0;
+function updateSelectedMonth(){
+	var y = document.getElementById("Year").value;
+	var m = document.getElementById("Month").value;
+	selectedMonth = new Month(Number(y), Number(m));
+}
+function updateDaySelect(){
+	var numDays = selectedMonth.nextMonth().getDateObject(0).getDate();
+	var day = document.getElementById("Day");
+	day.max = (numDays);
+}
+updateSelectedMonth();
+updateDaySelect();
+</script>
+<button id="addEvent">Submit Event</button>
+
 <script type="text/javascript">
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var currentMonth = new Month(2015, 2); //march 2015
