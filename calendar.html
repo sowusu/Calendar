@@ -19,6 +19,7 @@
 <nav>
 	<button id="PrevMonth">
 	Previous Month
+
 	</button>
 	<button id="NextMonth">
 		Next Month
@@ -55,32 +56,73 @@
 	</table>
 </section>
 
-
 <script src="calendarHelper.js"></script>
 <script type="text/javascript">
-//var months = {January, February, March, April, May, June, July, August, September, October, November, December};
-var currentMonth = new Month(2015, 3); //april 2015
+var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var currentMonth = new Month(2015, 2); //march 2015
+function getMonthStartDay(){
+	return currentMonth.getDateObject(1).getDay();
+}
+function removeDates(){
+	var weeks = document.getElementById("dates").getElementsByClassName("week");
+	alert(weeks.length);
+	for(var i = 0; i < weeks.length; i++){
+		document.getElementById("dates").removeChild(weeks[i]);
+	}
+}
+function getDaysInMonth(){
+	return currentMonth.nextMonth().getDateObject(0).getDate();
+}
 function displayDates(){
 	var newTr = document.createElement("tr");
-	for(var i = 0; i < 7; i++){
+	newTr.setAttribute("class", "week");
+	var startDay = getMonthStartDay();
+	var i;
+	for(i = 0; i < startDay; i++){
 		var newTd = document.createElement("td");
 		newTd.appendChild(document.createTextNode("X"));
 		newTr.appendChild(newTd);
 	}
+	for(var j = i; j < 7; j++){
+		var newTd = document.createElement("td");
+		newTd.appendChild(document.createTextNode(months[currentMonth.month] + " " + (j-i+1)));
+		newTr.appendChild(newTd);
+	}
 	document.getElementById("dates").appendChild(newTr);
+	var daysInMonth = getDaysInMonth();
+	for(var k = j-i; k < daysInMonth; k+=7){
+		var newTr2 = document.createElement("tr");
+		newTr2.setAttribute("class", "week");
+		for(var l = 0; l < 7; l++){
+			var newTd = document.createElement("td");
+			if(k+l < daysInMonth){
+				newTd.appendChild(document.createTextNode(months[currentMonth.month] + " " + (k+l+1)));
+			}
+			else{
+				newTd.appendChild(document.createTextNode("X"));
+			}
+			newTr2.appendChild(newTd);
+		}
+		document.getElementById("dates").appendChild(newTr2);
+	}
 }
 displayDates();
-//function updateMonth(){
-//	var monthName = months[currentMonth.month];
-//	document.getElementById("MonthName").textContent = monthName + ", " + currentMonth.year;
-//}
+function updateMonth(){
+	var monthName = months[currentMonth.month];
+	document.getElementById("MonthName").textContent = monthName + ", " + currentMonth.year;
+}
+updateMonth();
 document.getElementById("PrevMonth").addEventListener("click", function(event){
 	currentMonth = currentMonth.prevMonth(); // Previous month would be currentMonth.prevMonth()
-	alert("The new month is "+currentMonth.month+" "+currentMonth.year);
+	removeDates();
+	displayDates();
+	updateMonth();
 }, false);
 document.getElementById("NextMonth").addEventListener("click", function(event){
-	currentMonth = currentMonth.nextMonth(); // Previous month would be currentMonth.prevMonth()
-	alert("The new month is "+currentMonth.month+" "+currentMonth.year);
+	currentMonth = currentMonth.nextMonth();
+	removeDates();
+	displayDates();
+	updateMonth();
 }, false);
 </script>
 </body>
