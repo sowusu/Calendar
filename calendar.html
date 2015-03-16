@@ -1,38 +1,61 @@
 <!DOCTYPE html>
 <html>
-<head><title>My Calendar</title></head>
+<head><title>My Calendar</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Bootstrap -->
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+<link rel="stylesheet" href="cal.css" type="text/css" media = "screen"/>
+
+</head>
+
 <body>
-<button id="PrevMonth">
+
+<header>
+	Hunter and Nana's Calendar!! Wooot!!
+</header>
+
+<nav>
+	<button id="PrevMonth">
 	Previous Month
-</button>
-<button id="NextMonth">
-	Next Month
-</button>
-<table id="dates" border="1">
-	<tr>
-		<th>
-		Sunday
-		</th>
-		<th>
-		Monday
-		</th>
-		<th>
-		Tuesday
-		</th>
-		<th>
-		Wednesday
-		</th>
-		<th>
-		Thursday
-		</th>
-		<th>
-		Friday
-		</th>
-		<th>
-		Saturday
-		</th>
-	</tr>
-</table>
+	</button>
+	<button id="NextMonth">
+		Next Month
+	</button>
+	<button>Example button</button>
+	<!-- buttons and options go here-->
+</nav>
+
+<section class = "container-fluid" >
+	<table id="dates" border="1">
+		<tr>
+			<th>
+			Sunday
+			</th>
+			<th>
+			Monday
+			</th>
+			<th>
+			Tuesday
+			</th>
+			<th>
+			Wednesday
+			</th>
+			<th>
+			Thursday
+			</th>
+			<th>
+			Friday
+			</th>
+			<th>
+			Saturday
+			</th>
+		</tr>
+	</table>
+</section>
+
+
 <script src="calendarHelper.js"></script>
 <script type="text/javascript">
 //var months = {January, February, March, April, May, June, July, August, September, October, November, December};
