@@ -43,9 +43,9 @@ function getMonthStartDay(){
 }
 function removeDates(){
 	var weeks = document.getElementById("dates").getElementsByClassName("week");
-	alert(weeks.length);
-	for(var i = 0; i < weeks.length; i++){
-		document.getElementById("dates").removeChild(weeks[i]);
+	var len = weeks.length;
+	for(var i = 0; i < len; i++){
+		document.getElementById("dates").removeChild(weeks[0]);
 	}
 }
 function getDaysInMonth(){
