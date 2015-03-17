@@ -141,9 +141,9 @@ updateDaySelect();
 <script type="text/javascript">
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var currentMonth = new Month(2015, 2); //march 2015
-
+var startDay = getMonthStartDay();
 var jsonInfo;
-
+/*
 $("#addEvent").click(function(){
 	
 	$.ajax({url: "db_input.php", data :{"fire":"burning"}, success:function (result){
@@ -157,14 +157,14 @@ $("#addEvent").click(function(){
 
 
 
-	/*	"demo_test.txt", function(responseTxt, statusTxt, xhr){
+		"demo_test.txt", function(responseTxt, statusTxt, xhr){
     if(statusTxt == "success")
         alert("External content loaded successfully!");
     if(statusTxt == "error")
-        alert("Error: " + xhr.status + ": " + xhr.statusText);*/
+        alert("Error: " + xhr.status + ": " + xhr.statusText);
 });
 
-
+*/
 
 
 function getMonthStartDay(){
@@ -180,30 +180,81 @@ function removeDates(){
 function getDaysInMonth(){
 	return currentMonth.nextMonth().getDateObject(0).getDate();
 }
+function addToCalendar(crntEvent){
+	var newTr;
+	var trIndex = 0;
+	var jsondata = JSON.parse(crntEvent);
+	for(var i=0;i<getDaysInMonth();i++){
+		if(trIndex==0){
+			newTr = document.createElement("tr");
+			newTr.setAttribute("class", "week");
+		}
+		var events = eventsOnDay(i+1, jsondata);
+		var newTd = document.createElement("td");	
+		newTd.appendChild(document.createTextNode(months[currentMonth.month] + " " + (i+1)));
+		newTd.appendChild(document.createElement("br"));
+		for(var j = 0; j < events.length; j++){
+			newTd.appendChild(document.createTextNode(events[j]));
+			newTd.appendChild(document.createElement("br"));
+		}	
+		newTr.appendChild(newTd);
+		trIndex=(trIndex+1)%7;
+		if(i==getDaysInMonth()-1){
+			for(;trIndex != 0; trIndex=(trIndex+1)%7){
+				var newTd2 = document.createElement("td");
+				newTd2.appendChild(document.createTextNode("X"));
+				newTr.appendChild(newTd2);
+			}
+		}
+		if(trIndex==0){
+			document.getElementById("dates").appendChild(newTr);
+		}
+	}
+}
+var thisthis = 0;
+function eventsOnDay(day, jsondata){
+	var maxindex = jsondata.maxindex;
+	var arr = [];
+	for(var i=0;i<maxindex;i++){
+		if(jsondata[i].day == day){
+			arr.push(jsondata[i].time + " " + jsondata[i].event);
+		}
+	}
+	return arr;
+}
 function displayDates(){
-	var newTr = document.createElement("tr");
-	newTr.setAttribute("class", "week");
-	var startDay = getMonthStartDay();
+	newTr = document.createElement("tr");
+//	newTr.setAttribute("class", "week");
+//	var startDay = getMonthStartDay();
 	var i;
 	for(i = 0; i < startDay; i++){
 		var newTd = document.createElement("td");
 		newTd.appendChild(document.createTextNode("X"));
 		newTr.appendChild(newTd);
+		trIndex++;
 	}
-	for(var j = i; j < 7; j++){
-		var newTd = document.createElement("td");
-		newTd.appendChild(document.createTextNode(months[currentMonth.month] + " " + (j-i+1)));
-		newTr.appendChild(newTd);
-	}
-	document.getElementById("dates").appendChild(newTr);
 	var daysInMonth = getDaysInMonth();
-	for(var k = j-i; k < daysInMonth; k+=7){
+	//for(var j = day; j < daysInMonth; j++){
+		//var newTd = document.createElement("td");
+		//var day = j-i+1;
+		//newTd.appendChild(document.createTextNode(months[currentMonth.month] + " " + day));
+		getEvent(currentMonth.month, currentMonth.year);
+		//var jsondata = JSON.parse(crntEvent);
+		//alert(jsondata.maxindex);
+//	}
+//	document.getElementById("dates").appendChild(newTr);
+/*	for(var k = j-i; k < daysInMonth; k+=7){
 		var newTr2 = document.createElement("tr");
 		newTr2.setAttribute("class", "week");
 		for(var l = 0; l < 7; l++){
 			var newTd = document.createElement("td");
 			if(k+l < daysInMonth){
-				newTd.appendChild(document.createTextNode(months[currentMonth.month] + " " + (k+l+1)));
+				var day = k+l+1;;
+				newTd.appendChild(document.createTextNode(months[currentMonth.month] + " " + day));
+				getEvent(currentMonth.month, day, currentMonth.year);
+				if(crntEvent!=null){
+					newTd.appendChild(document.createTextNode(crntEvent));	
+				}
 			}
 			else{
 				newTd.appendChild(document.createTextNode("X"));
@@ -211,12 +262,19 @@ function displayDates(){
 			newTr2.appendChild(newTd);
 		}
 		document.getElementById("dates").appendChild(newTr2);
-	}
+	}*/
 }
 displayDates();
 function updateMonth(){
 	var monthName = months[currentMonth.month];
 	document.getElementById("MonthName").textContent = monthName + ", " + currentMonth.year;
+}
+function getEvent(month,year){
+	var xmlHttp = new XMLHttpRequest();
+	var u = "me";
+	xmlHttp.open("GET", "db_retreive.php?month=" + months[month] + "&year=" + year + "&username=" + u, true);
+	xmlHttp.addEventListener("load", ajaxCallback, false);
+	xmlHttp.send(null);
 }
 function addEvent(){
 	var xmlHttp = new XMLHttpRequest();
@@ -225,18 +283,16 @@ function addEvent(){
 	var y = document.getElementById("Year").value;
 	var d = document.getElementById("Day").value;
 	var t = document.getElementById("Time").value;
-	xmlHttp.open("GET", "db_input.php?event=" + e + "&month=" + m + "&year=" + y + "&day=" + d + "&time=" + t, true);
-	xmlHttp.addEventListener("load", ajaxCallback, false);
-	xmlHttp.send(null);
-}
-function getEvent(){
-	var xmlHttp = new XMLHttpRequest();
-	xmlHttp.open("GET", "db_input.php", true);
-	xmlHttp.addEventListener("load", ajaxCallback, false);
+	var u = "me";
+	xmlHttp.open("GET", "db_input.php?event=" + e + "&month=" + months[m] + "&year=" + y + "&day=" + d + "&time=" + t + "&username=" + u, true);
+	//xmlHttp.addEventListener("load", ajaxCallback, false);
 	xmlHttp.send(null);
 }
 function ajaxCallback(event){
-	alert( "Your file contains the text: " + event.target.responseText );
+	//alert( "Your file contains the text: " + event.target.responseText );
+	var crntEvent = event.target.responseText;
+	//alert(crntEvent);
+	addToCalendar(crntEvent);
 }
 updateMonth();
 document.getElementById("PrevMonth").addEventListener("click", function(event){

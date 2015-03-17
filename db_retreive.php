@@ -1,5 +1,3 @@
-
-
 <?php
 
 $userid;
@@ -25,7 +23,13 @@ $stmt_get->fetch();
 
 $stmt_get->close();
 
-$stmt_store = $mysqli->prepare("insert into events (event, month, year, day, time, userid) values (?,?,?,?,?,?)");
+$time;
+$event;
+$day;
+$month=$_GET['month'];
+$year=$_GET['year'];
+
+$stmt_store = $mysqli->prepare("select event, time, day from events where userid='".$userid."' and month='".$month."' and year='".$year."' order by time");
 
 if (!$stmt_store){
 	printf("%d\n", 2);//query failed; return 2
@@ -33,9 +37,23 @@ if (!$stmt_store){
 	exit;
 }
 
-$stmt_store->bind_param('ssiisi', $_GET['event'], $_GET['month'], $_GET['year'], $_GET['day'], $_GET['time'], $userid);
-
 $stmt_store->execute();
+
+$stmt_store->bind_result($event,$time,$day);
+$index = 0;
+$dayindex = 0;
+echo "{";
+while($stmt_store->fetch()){
+	if($index!=0){
+		echo ",";
+	}
+	echo "\"".$index."\":{\"event\":\"".htmlspecialchars($event)."\",\"time\":\"".htmlspecialchars($time)."\",\"day\":\"".htmlspecialchars($day)."\"}";
+	$index = $index + 1;
+}
+if($index!=0){
+	echo ",";
+}
+echo "\"maxindex\":\"".$index."\"}";
 
 $stmt_store->close();
 
