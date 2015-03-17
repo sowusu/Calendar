@@ -68,6 +68,9 @@
 <label>Day: </label><input type="number" min="1" max="7" step="1" value="1" id="Day">
 </select>
 
+<label>Time: </label><select id="Time">
+</select>
+
 <script src="calendarHelper.js"></script>
 
 <script type="text/javascript">
@@ -78,6 +81,18 @@ for(var i = 0; i < months.length; i++){
 	opt.appendChild(document.createTextNode(months[i]));
 	opt.setAttribute("value", i);
 	document.getElementById("Month").appendChild(opt);
+}
+for(var j = 0; j <= 23; j++){
+	for(var i = 0; i <= 30; i+=30){
+		var opt = document.createElement("option");
+		var jj = "" + j;
+		var ii = "" + i;
+		if(i==0){ii+="0";}
+		if(j<10){jj="0"+jj;}
+		opt.appendChild(document.createTextNode(jj + ":" + ii));
+		opt.setAttribute("value", (100*j+i));
+		document.getElementById("Time").appendChild(opt);
+	}
 }
 document.getElementById("Month").value = 0;
 function updateSelectedMonth(){
@@ -149,6 +164,9 @@ function updateMonth(){
 	var monthName = months[currentMonth.month];
 	document.getElementById("MonthName").textContent = monthName + ", " + currentMonth.year;
 }
+function addEvent(){
+	alert("DUNDUNDUN");
+}
 updateMonth();
 document.getElementById("PrevMonth").addEventListener("click", function(event){
 	currentMonth = currentMonth.prevMonth(); // Previous month would be currentMonth.prevMonth()
@@ -161,6 +179,9 @@ document.getElementById("NextMonth").addEventListener("click", function(event){
 	removeDates();
 	displayDates();
 	updateMonth();
+}, false);
+document.getElementById("addEvent").addEventListener("click", function(event){
+	addEvent();
 }, false);
 </script>
 </body>
