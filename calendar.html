@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang = "en">
 <head><title>My Calendar</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,27 +13,64 @@
 
 </head>
 
-<body>
+<body class = "container-fluid">
 
 <header>
 	Hunter and Nana's Calendar!! Wooot!!
 </header>
+<div class = "row">
+<nav >
+	<div id = "login-box">
+	    <label> Username </label><input type="text" id = "username" required>
+	    <label>Password</label><input type="password" id = "password"  required>
+	    <p><button id = "login_id">
+	    	LOGIN
+	    </button>
+	    <button id = "sign_id">
+	    SIGN UP </button>
+	   </p>
+	   <p id = "login-error" style = "display: none"></p>
+	 </div>
+	 <div id = "logout-box" >
+	 	<button id = "logout_id">
+	 		LOGOUT
+	 	</button>
+	 </div>
+</nav>
 
-<nav>
+
+
+<aside >
+	<div>
 	<button id="PrevMonth">
 	Previous Month
 
 	</button>
-
 	<label id="MonthName">Month</label>
-	<button id="NextMonth">
+	<button  id="NextMonth">
 		Next Month
 	</button>
-	<button>Example button</button>
+	</div>
 	<!-- buttons and options go here-->
-</nav>
 
-<section class = "container-fluid" >
+	<label>Event: </label><textarea id="Event"></textarea>
+
+
+	<label>Month: </label><select id="Month" onchange='updateSelectedMonth(); updateDaySelect();'>
+	</select>
+
+	<label>Year: </label><input type="number" min="0" step="1" value="2015" id="Year" onchange='updateSelectedMonth(); updateDaySelect();'>
+
+	<label>Day: </label><input type="number" min="1" max="7" step="1" value="1" id="Day">
+	</select>
+
+	<label>Time: </label><select id="Time">
+	</select>
+
+	<button id="addEvent">Submit Event</button>
+</aside>
+
+<section >
 	<table id="dates" border="1">
 		<tr>
 			<th>
@@ -60,25 +97,13 @@
 		</tr>
 	</table>
 </section>
-
-
-<label>Event: </label><textarea id="Event"></textarea>
-
-
-<label>Month: </label><select id="Month" onchange='updateSelectedMonth(); updateDaySelect();'>
-</select>
-
-<label>Year: </label><input type="number" min="0" step="1" value="2015" id="Year" onchange='updateSelectedMonth(); updateDaySelect();'>
-
-<label>Day: </label><input type="number" min="1" max="7" step="1" value="1" id="Day">
-</select>
-
-<label>Time: </label><select id="Time">
-</select>
-
+</div>
 <script src="calendarHelper.js"></script>
+<script src="login.js" ></script>
 
 <script type="text/javascript">
+var current_user = "";
+$("#logout-box").hide();
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var selectedMonth = new Month(2015, 0);
 for(var i = 0; i < months.length; i++){
@@ -113,8 +138,6 @@ function updateDaySelect(){
 updateSelectedMonth();
 updateDaySelect();
 </script>
-<button id="addEvent">Submit Event</button>
-
 <script type="text/javascript">
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var currentMonth = new Month(2015, 2); //march 2015

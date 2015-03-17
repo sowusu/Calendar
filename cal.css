@@ -1,18 +1,36 @@
 
+button #PrevMonth {
+	display: inline;
+}
 
 header{
 	text-align: center;
+	font-size: 3em;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	margin-bottom: 15px;
+	border: 2px dashed black;
 }
 
-nav {
-	
+aside {
+	border: 2px solid black;
 	float: left;
 }
 
+.control-buttons {
+	display: inline;
+}
+
+nav {
+	float: right;
+	border: 1px dashed green;
+	margin-right:30px;
+}
+
 section {
+	border: 2px solid black;
+}
 
-	position: fixed;
-	top: 100px;
-	left: 300px;
-
+body {
+	border: 2px solid pink;
 }
