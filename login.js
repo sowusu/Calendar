@@ -2,7 +2,7 @@
 
 
 $(document).ready(function(){
-	alert("login.js works!");
+	//alert("login.js works!");
 
 });
 
@@ -12,6 +12,8 @@ $("#logout_id").click(function(){
 	$("#login-box").toggle();
 	$("#logout-box").toggle();
 	current_user = "";
+	removeDates();
+	displayDates();
 	alert("Current user is: " + current_user);
 
 	
@@ -39,6 +41,8 @@ $("#login_id").click(function(){
 					$("#logout-box").toggle();
 					current_user = $("#username").val();
 					alert("Current user is: " + current_user);
+					removeDates();
+					displayDates();
 				}
 				else{
 					if ($("#login-error").text() == ""){
@@ -55,8 +59,7 @@ $("#login_id").click(function(){
 
 
 
-		})
-
+		});
 
 	}
 });

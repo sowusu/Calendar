@@ -271,7 +271,7 @@ function updateMonth(){
 }
 function getEvent(month,year){
 	var xmlHttp = new XMLHttpRequest();
-	var u = "me";
+	var u = current_user;
 	xmlHttp.open("GET", "db_retreive.php?month=" + months[month] + "&year=" + year + "&username=" + u, true);
 	xmlHttp.addEventListener("load", ajaxCallback, false);
 	xmlHttp.send(null);
@@ -283,7 +283,7 @@ function addEvent(){
 	var y = document.getElementById("Year").value;
 	var d = document.getElementById("Day").value;
 	var t = document.getElementById("Time").value;
-	var u = "me";
+	var u = current_user;
 	xmlHttp.open("GET", "db_input.php?event=" + e + "&month=" + months[m] + "&year=" + y + "&day=" + d + "&time=" + t + "&username=" + u, true);
 	//xmlHttp.addEventListener("load", ajaxCallback, false);
 	xmlHttp.send(null);
@@ -310,6 +310,8 @@ document.getElementById("NextMonth").addEventListener("click", function(event){
 
 document.getElementById("addEvent").addEventListener("click", function(event){
 	addEvent();
+	removeDates();
+	displayDates();
 }, false);
 </script>
 </body>
