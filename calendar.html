@@ -90,7 +90,7 @@ for(var j = 0; j <= 23; j++){
 		if(i==0){ii+="0";}
 		if(j<10){jj="0"+jj;}
 		opt.appendChild(document.createTextNode(jj + ":" + ii));
-		opt.setAttribute("value", (100*j+i));
+		opt.setAttribute("value", (jj + ":" + ii));
 		document.getElementById("Time").appendChild(opt);
 	}
 }
@@ -165,7 +165,24 @@ function updateMonth(){
 	document.getElementById("MonthName").textContent = monthName + ", " + currentMonth.year;
 }
 function addEvent(){
-	alert("DUNDUNDUN");
+	var xmlHttp = new XMLHttpRequest();
+	var e = document.getElementById("Event").value;
+	var m = document.getElementById("Month").value;
+	var y = document.getElementById("Year").value;
+	var d = document.getElementById("Day").value;
+	var t = document.getElementById("Time").value;
+	xmlHttp.open("GET", "db_input.php?event=" + e + "&month=" + m + "&year=" + y + "&day=" + d + "&time=" + t, true);
+	xmlHttp.addEventListener("load", ajaxCallback, false);
+	xmlHttp.send(null);
+}
+function getEvent(){
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.open("GET", "db_input.php", true);
+	xmlHttp.addEventListener("load", ajaxCallback, false);
+	xmlHttp.send(null);
+}
+function ajaxCallback(event){
+	alert( "Your file contains the text: " + event.target.responseText );
 }
 updateMonth();
 document.getElementById("PrevMonth").addEventListener("click", function(event){
