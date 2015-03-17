@@ -120,7 +120,7 @@ var months = ["January", "February", "March", "April", "May", "June", "July", "A
 var currentMonth = new Month(2015, 2); //march 2015
 
 var jsonInfo;
-
+/*
 $("#addEvent").click(function(){
 	
 	$.ajax({url: "db_input.php", data :{"fire":"burning"}, success:function (result){
@@ -134,14 +134,14 @@ $("#addEvent").click(function(){
 
 
 
-	/*	"demo_test.txt", function(responseTxt, statusTxt, xhr){
+		"demo_test.txt", function(responseTxt, statusTxt, xhr){
     if(statusTxt == "success")
         alert("External content loaded successfully!");
     if(statusTxt == "error")
-        alert("Error: " + xhr.status + ": " + xhr.statusText);*/
+        alert("Error: " + xhr.status + ": " + xhr.statusText);
 });
 
-
+*/
 
 
 function getMonthStartDay(){
@@ -202,14 +202,15 @@ function addEvent(){
 	var y = document.getElementById("Year").value;
 	var d = document.getElementById("Day").value;
 	var t = document.getElementById("Time").value;
-	xmlHttp.open("GET", "db_input.php?event=" + e + "&month=" + m + "&year=" + y + "&day=" + d + "&time=" + t, true);
-	xmlHttp.addEventListener("load", ajaxCallback, false);
+	var u = "me";
+	xmlHttp.open("GET", "db_input.php?event=" + e + "&month=" + months[m] + "&year=" + y + "&day=" + d + "&time=" + t + "&username=" + u, true);
+	//xmlHttp.addEventListener("load", ajaxCallback, false);
 	xmlHttp.send(null);
 }
 function getEvent(){
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.open("GET", "db_input.php", true);
-	xmlHttp.addEventListener("load", ajaxCallback, false);
+	//xmlHttp.addEventListener("load", ajaxCallback, false);
 	xmlHttp.send(null);
 }
 function ajaxCallback(event){
