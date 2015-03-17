@@ -24,7 +24,8 @@
 	Previous Month
 
 	</button>
-	<label id = "MonthName">Month</label>
+
+	<label id="MonthName">Month</label>
 	<button id="NextMonth">
 		Next Month
 	</button>
@@ -59,10 +60,61 @@
 		</tr>
 	</table>
 </section>
-<button id = "addEvent">
-	Add Event
-</button>
+
+
+<label>Event: </label><textarea id="Event"></textarea>
+
+
+<label>Month: </label><select id="Month" onchange='updateSelectedMonth(); updateDaySelect();'>
+</select>
+
+<label>Year: </label><input type="number" min="0" step="1" value="2015" id="Year" onchange='updateSelectedMonth(); updateDaySelect();'>
+
+<label>Day: </label><input type="number" min="1" max="7" step="1" value="1" id="Day">
+</select>
+
+<label>Time: </label><select id="Time">
+</select>
+
 <script src="calendarHelper.js"></script>
+
+<script type="text/javascript">
+var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var selectedMonth = new Month(2015, 0);
+for(var i = 0; i < months.length; i++){
+	var opt = document.createElement("option");
+	opt.appendChild(document.createTextNode(months[i]));
+	opt.setAttribute("value", i);
+	document.getElementById("Month").appendChild(opt);
+}
+for(var j = 0; j <= 23; j++){
+	for(var i = 0; i <= 30; i+=30){
+		var opt = document.createElement("option");
+		var jj = "" + j;
+		var ii = "" + i;
+		if(i==0){ii+="0";}
+		if(j<10){jj="0"+jj;}
+		opt.appendChild(document.createTextNode(jj + ":" + ii));
+		opt.setAttribute("value", (jj + ":" + ii));
+		document.getElementById("Time").appendChild(opt);
+	}
+}
+document.getElementById("Month").value = 0;
+function updateSelectedMonth(){
+	var y = document.getElementById("Year").value;
+	var m = document.getElementById("Month").value;
+	selectedMonth = new Month(Number(y), Number(m));
+}
+function updateDaySelect(){
+	var numDays = selectedMonth.nextMonth().getDateObject(0).getDate();
+	var day = document.getElementById("Day");
+	day.max = (numDays);
+}
+updateSelectedMonth();
+updateDaySelect();
+</script>
+<button id="addEvent">Submit Event</button>
+
 <script type="text/javascript">
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var currentMonth = new Month(2015, 2); //march 2015
@@ -97,9 +149,9 @@ function getMonthStartDay(){
 }
 function removeDates(){
 	var weeks = document.getElementById("dates").getElementsByClassName("week");
-	alert(weeks.length);
-	for(var i = 0; i < weeks.length; i++){
-		document.getElementById("dates").removeChild(weeks[i]);
+	var len = weeks.length;
+	for(var i = 0; i < len; i++){
+		document.getElementById("dates").removeChild(weeks[0]);
 	}
 }
 function getDaysInMonth(){
@@ -143,6 +195,26 @@ function updateMonth(){
 	var monthName = months[currentMonth.month];
 	document.getElementById("MonthName").textContent = monthName + ", " + currentMonth.year;
 }
+function addEvent(){
+	var xmlHttp = new XMLHttpRequest();
+	var e = document.getElementById("Event").value;
+	var m = document.getElementById("Month").value;
+	var y = document.getElementById("Year").value;
+	var d = document.getElementById("Day").value;
+	var t = document.getElementById("Time").value;
+	xmlHttp.open("GET", "db_input.php?event=" + e + "&month=" + m + "&year=" + y + "&day=" + d + "&time=" + t, true);
+	xmlHttp.addEventListener("load", ajaxCallback, false);
+	xmlHttp.send(null);
+}
+function getEvent(){
+	var xmlHttp = new XMLHttpRequest();
+	xmlHttp.open("GET", "db_input.php", true);
+	xmlHttp.addEventListener("load", ajaxCallback, false);
+	xmlHttp.send(null);
+}
+function ajaxCallback(event){
+	alert( "Your file contains the text: " + event.target.responseText );
+}
 updateMonth();
 document.getElementById("PrevMonth").addEventListener("click", function(event){
 	currentMonth = currentMonth.prevMonth(); // Previous month would be currentMonth.prevMonth()
@@ -157,16 +229,9 @@ document.getElementById("NextMonth").addEventListener("click", function(event){
 	updateMonth();
 }, false);
 
-
-
-
-
-
-
-
-
-
-
+document.getElementById("addEvent").addEventListener("click", function(event){
+	addEvent();
+}, false);
 </script>
 </body>
 </html>
