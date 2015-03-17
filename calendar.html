@@ -3,6 +3,9 @@
 <head><title>My Calendar</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Jquery -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
 <!-- Bootstrap -->
 <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
@@ -21,6 +24,7 @@
 	Previous Month
 
 	</button>
+	<label id = "MonthName">Month</label>
 	<button id="NextMonth">
 		Next Month
 	</button>
@@ -55,11 +59,39 @@
 		</tr>
 	</table>
 </section>
-
+<button id = "addEvent">
+	Add Event
+</button>
 <script src="calendarHelper.js"></script>
 <script type="text/javascript">
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 var currentMonth = new Month(2015, 2); //march 2015
+
+var jsonInfo;
+
+$("#addEvent").click(function(){
+	
+	$.ajax({url: "db_input.php", data :{"fire":"burning"}, success:function (result){
+		alert(result);
+	}
+
+	}).done(function() {
+    //alert( "success" );
+    
+  });
+
+
+
+	/*	"demo_test.txt", function(responseTxt, statusTxt, xhr){
+    if(statusTxt == "success")
+        alert("External content loaded successfully!");
+    if(statusTxt == "error")
+        alert("Error: " + xhr.status + ": " + xhr.statusText);*/
+});
+
+
+
+
 function getMonthStartDay(){
 	return currentMonth.getDateObject(1).getDay();
 }
@@ -124,6 +156,17 @@ document.getElementById("NextMonth").addEventListener("click", function(event){
 	displayDates();
 	updateMonth();
 }, false);
+
+
+
+
+
+
+
+
+
+
+
 </script>
 </body>
 </html>
