@@ -2,76 +2,59 @@
 <html lang = "en">
 <head><title>My Calendar</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <!-- Jquery -->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 
 <!-- Bootstrap -->
-<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-
-<link rel="stylesheet" href="cal.css" type="text/css" media = "screen"/>
+<link href="bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
+<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet" media="screen">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="cal.css" type="text/css"/>
 
 </head>
 
-<body class = "container-fluid">
-
+<body>
+	
 <header>
 	Hunter and Nana's Calendar!! Wooot!!
 </header>
-<div class = "row">
-<nav >
-	<div id = "login-box">
-	    <label> Username </label><input type="text" id = "username" required>
-	    <label>Password</label><input type="password" id = "password"  required>
-	    <p><button id = "login_id">
-	    	LOGIN
-	    </button>
-	    <button id = "sign_id">
-	    SIGN UP </button>
-	   </p>
-	   <p id = "login-error" style = "display: none"></p>
-	 </div>
-	 <div id = "logout-box" >
-	 	<button id = "logout_id">
-	 		LOGOUT
-	 	</button>
-	 </div>
-</nav>
 
 
+<div id = "page" class = "container-fluid">
+	
+	<div id = "sidebar" class = "pull-left">
+		<div class = "control-buttons">
+		<button id="PrevMonth" class = "btn btn-info btn-sm">
+		Previous Month
 
-<aside >
-	<div>
-	<button id="PrevMonth">
-	Previous Month
+		</button>
+		<strong id="MonthName">Month</strong>
+		<button  id="NextMonth" class = "btn btn-info btn-sm">
+			Next Month
+		</button>
+		</div>
+		<!-- buttons and options go here-->
 
-	</button>
-	<label id="MonthName">Month</label>
-	<button  id="NextMonth">
-		Next Month
-	</button>
+		<label>Event: </label><textarea id="Event" placeholder = "Event Description"></textarea>
+
+
+		<label>Month: </label><select id="Month" onchange='updateSelectedMonth(); updateDaySelect();'>
+		</select>
+
+		<label>Year: </label><input type="number" min="0" step="1" value="2015" id="Year" onchange='updateSelectedMonth(); updateDaySelect();'>
+
+		<label>Day: </label><input type="number" min="1" max="7" step="1" value="1" id="Day">
+		</select>
+
+		<label>Time: </label><select id="Time">
+		</select>
+
+		<button id="addEvent" class = "btn btn-primary">Submit Event</button>
 	</div>
-	<!-- buttons and options go here-->
 
-	<label>Event: </label><textarea id="Event"></textarea>
-
-
-	<label>Month: </label><select id="Month" onchange='updateSelectedMonth(); updateDaySelect();'>
-	</select>
-
-	<label>Year: </label><input type="number" min="0" step="1" value="2015" id="Year" onchange='updateSelectedMonth(); updateDaySelect();'>
-
-	<label>Day: </label><input type="number" min="1" max="7" step="1" value="1" id="Day">
-	</select>
-
-	<label>Time: </label><select id="Time">
-	</select>
-
-	<button id="addEvent">Submit Event</button>
-</aside>
-
-<section >
-	<table id="dates" border="1">
+	
+	<table id="dates" class = "table" border="1">
 		<tr>
 			<th>
 			Sunday
@@ -96,7 +79,34 @@
 			</th>
 		</tr>
 	</table>
-</section>
+
+	<div id = "navbar" class="pull-right">
+		<div id = "login-box" class = "form-inline">
+			<div class = "form-group">
+		    <label class="sr-only" for="username"><strong> Username </strong></label>
+		    <input type="text" id = "username" placeholder = "Enter username" required>
+			</div>
+			<div class = "form-group">
+		    <label class="sr-only" for="password"><strong>Password</strong></label>
+		    <input type="password" id = "password"  placeholder = "Password" required>
+		    <div class = "form-group">
+		    <button id = "login_id" class = "btn btn-default">
+		    	LOGIN
+		    </button>
+		    <button id = "sign_id" class = "btn btn-default">
+		    SIGN UP </button>
+		   
+		   <p id = "login-error" style = "display: none"></p>
+		</div>
+		<div id = "logout-box" >
+		 	<button id = "logout_id" class = "btn btn-default">
+		 		LOGOUT
+		 	</button>
+		</div>
+	</div>
+
+
+	
 </div>
 <script src="calendarHelper.js"></script>
 <script src="login.js" ></script>
