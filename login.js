@@ -1,20 +1,21 @@
 
 
-
+/*
 $(document).ready(function(){
-	//alert("login.js works!");
+	alert("login.js works!");
 
 });
-
+*/
 $("#logout_id").click(function(){
 	$("#username").val("");
 	$("#password").val("");
 	$("#login-box").toggle();
 	$("#logout-box").toggle();
+	token = "";
 	current_user = "";
 	removeDates();
 	displayDates();
-	alert("Current user is: " + current_user);
+	//alert("Current user is: " + current_user);
 
 	
 });
@@ -39,10 +40,11 @@ $("#login_id").click(function(){
 					//alert(result.message);
 					$("#login-box").toggle();
 					$("#logout-box").toggle();
+					token = result.token;//created csrf token
 					current_user = $("#username").val();
-					alert("Current user is: " + current_user);
 					removeDates();
 					displayDates();
+					//alert("Current user is: " + current_user);
 				}
 				else{
 					if ($("#login-error").text() == ""){
@@ -59,7 +61,8 @@ $("#login_id").click(function(){
 
 
 
-		});
+		})
+
 
 	}
 });

@@ -99,7 +99,7 @@
 		   <p id = "login-error" style = "display: none"></p>
 		</div>
 		<div id = "logout-box" >
-		 	<button id = "logout_id" class = "btn btn-default">
+		 	<button id = "logout_id" >
 		 		LOGOUT
 		 	</button>
 		</div>
@@ -112,16 +112,23 @@
 <script src="login.js" ></script>
 
 <script type="text/javascript">
-var current_user = "";
+var current_user = "";//initialize no current user
+var token;//CSRF token set at login and unset at logout
 $("#logout-box").hide();
+
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 var selectedMonth = new Month(2015, 0);
+
+//setting up select input element for choosing the month of the event
 for(var i = 0; i < months.length; i++){
 	var opt = document.createElement("option");
 	opt.appendChild(document.createTextNode(months[i]));
 	opt.setAttribute("value", i);
 	document.getElementById("Month").appendChild(opt);
 }
+
+//setting up the select input element for choosing the time of the event
 for(var j = 0; j <= 23; j++){
 	for(var i = 0; i <= 30; i+=30){
 		var opt = document.createElement("option");
@@ -134,53 +141,40 @@ for(var j = 0; j <= 23; j++){
 		document.getElementById("Time").appendChild(opt);
 	}
 }
+//initialize chosen event month to January
 document.getElementById("Month").value = 0;
+
+
 function updateSelectedMonth(){
+	//saves the current chosen event month
 	var y = document.getElementById("Year").value;
 	var m = document.getElementById("Month").value;
 	selectedMonth = new Month(Number(y), Number(m));
 }
+
 function updateDaySelect(){
+	//ensures the right number of days in the chosen month
 	var numDays = selectedMonth.nextMonth().getDateObject(0).getDate();
 	var day = document.getElementById("Day");
 	day.max = (numDays);
 }
 updateSelectedMonth();
 updateDaySelect();
-</script>
-<script type="text/javascript">
-var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-var currentMonth = new Month(2015, 2); //march 2015
+
+var current_date = new Date();
+//var currentMonth = new Month(current_date.getFullYear(), current_date.getMonth()); //get current year and month
+var currentMonth = new Month(2015, 2);
 var startDay = getMonthStartDay();
 var jsonInfo;
-/*
-$("#addEvent").click(function(){
-	
-	$.ajax({url: "db_input.php", data :{"fire":"burning"}, success:function (result){
-		alert(result);
-	}
 
-	}).done(function() {
-    //alert( "success" );
-    
-  });
-
-
-
-		"demo_test.txt", function(responseTxt, statusTxt, xhr){
-    if(statusTxt == "success")
-        alert("External content loaded successfully!");
-    if(statusTxt == "error")
-        alert("Error: " + xhr.status + ": " + xhr.statusText);
-});
-
-*/
 
 
 function getMonthStartDay(){
+	//get the first day of the current month
 	return currentMonth.getDateObject(1).getDay();
 }
 function removeDates(){
+	//removes date cells from calendar table
 	var weeks = document.getElementById("dates").getElementsByClassName("week");
 	var len = weeks.length;
 	for(var i = 0; i < len; i++){
@@ -188,9 +182,11 @@ function removeDates(){
 	}
 }
 function getDaysInMonth(){
+	//gets the number of days in the month
 	return currentMonth.nextMonth().getDateObject(0).getDate();
 }
 function addToCalendar(crntEvent){
+	//adds events for a whole month
 	var newTr;
 	var trIndex = 0;
 	var jsondata = JSON.parse(crntEvent);
@@ -222,7 +218,9 @@ function addToCalendar(crntEvent){
 	}
 }
 var thisthis = 0;
+
 function eventsOnDay(day, jsondata){
+	//returns an array of events for a day in the month
 	var maxindex = jsondata.maxindex;
 	var arr = [];
 	for(var i=0;i<maxindex;i++){
@@ -233,9 +231,10 @@ function eventsOnDay(day, jsondata){
 	return arr;
 }
 function displayDates(){
-	newTr = document.createElement("tr");
+	var newTr = document.createElement("tr");//NANA_added 'var' keyword
 //	newTr.setAttribute("class", "week");
-//	var startDay = getMonthStartDay();
+	var trIndex = 0; //NANA_initialized trIndex variable
+	var startDay = getMonthStartDay();
 	var i;
 	for(i = 0; i < startDay; i++){
 		var newTd = document.createElement("td");
@@ -276,10 +275,12 @@ function displayDates(){
 }
 displayDates();
 function updateMonth(){
+	//updates month name being displayed as current month in the side bar
 	var monthName = months[currentMonth.month];
 	document.getElementById("MonthName").textContent = monthName + ", " + currentMonth.year;
 }
 function getEvent(month,year){
+	//get events for a whole month for a particular user
 	var xmlHttp = new XMLHttpRequest();
 	var u = current_user;
 	xmlHttp.open("GET", "db_retreive.php?month=" + months[month] + "&year=" + year + "&username=" + u, true);
@@ -287,6 +288,7 @@ function getEvent(month,year){
 	xmlHttp.send(null);
 }
 function addEvent(){
+	//input an event for a particular date and user into the database
 	var xmlHttp = new XMLHttpRequest();
 	var e = document.getElementById("Event").value;
 	var m = document.getElementById("Month").value;

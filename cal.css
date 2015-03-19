@@ -3,6 +3,7 @@ button #PrevMonth {
 	display: inline;
 }
 
+
 header{
 	text-align: center;
 	font-size: 3em;
@@ -16,41 +17,35 @@ header{
 	border: 2px solid black;
 	width: 30%;
 	display:inline-block;
-	margin-left:-20px;
-	white-space:normal;
+	margin-left: -20px;
 	/*float: left;*/
+	white-space: normal;
 }
 
 .control-buttons {
-	white-space: nowrap;
-
+	display: inline;
 }
-
-
-#NextMonth, #PrevMonth{
-	
-	display:inline;
-	white-space:normal;	
-}
-
 
 #navbar {
 	/*float: right;*/
 	display:inline-block;
-	/*border: 1px dashed green;*/
+	border: 1px dashed green;
 	margin-right:-20px;
-	white-space:normal;
 	width:20%;
+	white-space: normal;
+}
+
+#logout-box{
+	border: 1px dashed brown;
 }
 
 table {
 	display:inline-block;
 	width: 50% !important;
-	margin-top: 20px;
-	padding-left: 10px;
-	padding-right: 10px;
-	white-space:normal;
-	/*border: 2px solid blue;*/
+	margin-left: 10px;
+	margin-right: 10px;
+	border: 2px solid white;
+	white-space: normal;
 }
 
 #page {

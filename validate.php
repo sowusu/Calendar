@@ -3,11 +3,13 @@ header("Content-Type: application/json");
 include 'hashpassword.php';
 session_start();
 
+
+
 $mysqli = new mysqli('localhost', 'caluser', 'calpass', 'calendar');
 
 if ($mysqli->connect_errno){
 	echo json_encode(array("success" => false,
-								"message" => "db connection Failed: " . $mysqli->connect_error));
+							"message" => "db connection Failed: " . $mysqli->connect_error));
 	
 	
 	exit;
@@ -134,8 +136,11 @@ else if ($action = "ENTER")
 		
 		else
 		{
+			$_SESSION['token'] = substr(md5(rand()), 0, 10);	//CSRF token for preventing attacks
+					
 			echo json_encode(array("success" => true,
-								"message" => "Login was successful"));
+								"message" => "Login was successful",
+								"token" => $_SESSION['token']));
 			exit;	
 
 		}

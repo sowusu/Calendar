@@ -1,7 +1,13 @@
 
 
 <?php
+session_start();
 
+//CHECK CSRF TOKEN
+/*if($_SESSION['token'] !== $_POST['token']){
+  die("Request forgery detected");
+}
+*/
 $userid;
 $mysqli = new mysqli('localhost', 'caluser', 'calpass', 'calendar');
 
@@ -28,8 +34,7 @@ $stmt_get->close();
 $stmt_store = $mysqli->prepare("insert into events (event, month, year, day, time, userid) values (?,?,?,?,?,?)");
 
 if (!$stmt_store){
-	printf("%d\n", 2);//query failed; return 2
-	printf("Query Prep Failed: %s\n", $mysqli->error);
+	printf("%d\n", 2);//query failed; return 1
 	exit;
 }
 
@@ -38,8 +43,6 @@ $stmt_store->bind_param('ssiisi', $_GET['event'], $_GET['month'], $_GET['year'],
 $stmt_store->execute();
 
 $stmt_store->close();
-
-
 
 
 
