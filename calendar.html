@@ -187,20 +187,36 @@ function getDaysInMonth(){
 }
 function addToCalendar(crntEvent){
 	//adds events for a whole month
-	var newTr;
+	var newTr = document.createElement("tr");
+	newTr.setAttribute("class", "week");
 	var trIndex = 0;
 	var jsondata = JSON.parse(crntEvent);
+	var startDay = getMonthStartDay();
+	for(var i = 0; i < startDay; i++){
+		var newTd = document.createElement("td");
+		newTd.appendChild(document.createTextNode("X"));
+		newTr.appendChild(newTd);
+		trIndex++;
+	}
+	var daysInMonth = getDaysInMonth();
 	for(var i=0;i<getDaysInMonth();i++){
 		if(trIndex==0){
 			newTr = document.createElement("tr");
 			newTr.setAttribute("class", "week");
 		}
 		var events = eventsOnDay(i+1, jsondata);
+		var eventIds = eventIdsOnDay(i+1, jsondata);
 		var newTd = document.createElement("td");	
 		newTd.appendChild(document.createTextNode(months[currentMonth.month] + " " + (i+1)));
 		newTd.appendChild(document.createElement("br"));
 		for(var j = 0; j < events.length; j++){
-			newTd.appendChild(document.createTextNode(events[j]));
+			var eventDiv = document.createElement("div");
+			var eventNode = document.createElement("p");
+			eventNode.innerHTML = events[j];
+			eventDiv.appendChild(eventNode);
+			eventDiv.id = eventIds[j];
+			$(eventDiv).one("click",editEvent.bind(eventDiv));
+			newTd.appendChild(eventDiv);
 			newTd.appendChild(document.createElement("br"));
 		}	
 		newTr.appendChild(newTd);
@@ -217,6 +233,63 @@ function addToCalendar(crntEvent){
 		}
 	}
 }
+
+function editEvent(event){
+	var text = this.childNodes[0].innerHTML;
+	this.childNodes[0].hidden = true;
+	var oldTime = text.substring(0,5);
+	var oldEvent = text.substring(6);
+	var timer = document.createElement("select");
+	for(var j = 0; j <= 23; j++){
+		for(var i = 0; i <= 30; i+=30){
+			var opt = document.createElement("option");
+			var jj = "" + j;
+			var ii = "" + i;
+			if(i==0){ii+="0";}
+			if(j<10){jj="0"+jj;}
+			var time = jj + ":" + ii;
+			if(time==oldTime){
+				opt.selected = true;
+			}
+			opt.appendChild(document.createTextNode(time));
+			opt.setAttribute("value", (jj + ":" + ii));
+			timer.appendChild(opt);
+		}
+	}
+	this.appendChild(timer);
+	var newEvent = document.createElement("textarea");
+	newEvent.value = oldEvent;
+	this.appendChild(newEvent);
+	var deleteButton = document.createElement("button");
+	deleteButton.innerHTML = "DELETE";
+	var editButton = document.createElement("button");
+	editButton.innerHTML = "EDIT";
+	deleteButton.addEventListener("click", deleteEvent.bind(this), false);
+	editButton.addEventListener("click", confirmEdit.bind(this), false);
+	this.appendChild(deleteButton);
+	this.appendChild(editButton);
+}
+
+function deleteEvent(event){
+	var id = this.id;
+	$.ajax({url:"db_delete.php",type:"POST",data:{"id":id, "token":token}});
+	setTimeout(function(){
+		removeDates();
+		displayDates();
+	},500)
+}
+
+function confirmEdit(event){
+	var id = this.id;
+	var eventText = this.childNodes[2].value;
+	var time = this.childNodes[1].value;
+	$.ajax({url:"db_edit.php",type:"POST",data:{"id":id, "eventText":eventText, "time":time, "token":token}});
+	setTimeout(function(){
+		removeDates();
+		displayDates();
+	},500)
+}
+
 var thisthis = 0;
 
 function eventsOnDay(day, jsondata){
@@ -230,19 +303,20 @@ function eventsOnDay(day, jsondata){
 	}
 	return arr;
 }
+function eventIdsOnDay(day, jsondata){
+	//returns an array of events for a day in the month
+	var maxindex = jsondata.maxindex;
+	var arr = [];
+	for(var i=0;i<maxindex;i++){
+		if(jsondata[i].day == day){
+			arr.push(jsondata[i].id);
+		}
+	}
+	return arr;
+}
 function displayDates(){
 	var newTr = document.createElement("tr");//NANA_added 'var' keyword
 //	newTr.setAttribute("class", "week");
-	var trIndex = 0; //NANA_initialized trIndex variable
-	var startDay = getMonthStartDay();
-	var i;
-	for(i = 0; i < startDay; i++){
-		var newTd = document.createElement("td");
-		newTd.appendChild(document.createTextNode("X"));
-		newTr.appendChild(newTd);
-		trIndex++;
-	}
-	var daysInMonth = getDaysInMonth();
 	//for(var j = day; j < daysInMonth; j++){
 		//var newTd = document.createElement("td");
 		//var day = j-i+1;
@@ -283,9 +357,10 @@ function getEvent(month,year){
 	//get events for a whole month for a particular user
 	var xmlHttp = new XMLHttpRequest();
 	var u = current_user;
-	xmlHttp.open("GET", "db_retreive.php?month=" + months[month] + "&year=" + year + "&username=" + u, true);
+	xmlHttp.open("POST", "db_retreive.php", true);
+	xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	xmlHttp.addEventListener("load", ajaxCallback, false);
-	xmlHttp.send(null);
+	xmlHttp.send("month=" + months[month] + "&year=" + year + "&username=" + u + "&token=" + token);
 }
 function addEvent(){
 	//input an event for a particular date and user into the database
@@ -296,13 +371,14 @@ function addEvent(){
 	var d = document.getElementById("Day").value;
 	var t = document.getElementById("Time").value;
 	var u = current_user;
-	xmlHttp.open("GET", "db_input.php?event=" + e + "&month=" + months[m] + "&year=" + y + "&day=" + d + "&time=" + t + "&username=" + u, true);
-	//xmlHttp.addEventListener("load", ajaxCallback, false);
-	xmlHttp.send(null);
+	xmlHttp.open("POST", "db_input.php", true);
+	xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xmlHttp.send("event=" + e + "&month=" + months[m] + "&year=" + y + "&day=" + d + "&time=" + t + "&username=" + u + "&token=" +token);
 }
 function ajaxCallback(event){
 	//alert( "Your file contains the text: " + event.target.responseText );
 	var crntEvent = event.target.responseText;
+	if(current_user==""){crntEvent="{\"maxindex\":0}"};
 	//alert(crntEvent);
 	addToCalendar(crntEvent);
 }

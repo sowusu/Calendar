@@ -1,5 +1,12 @@
 <?php
 
+session_start();
+
+//CHECK CSRF TOKEN
+if($_SESSION['token'] !== $_POST['token']){
+  die("Request forgery detected");
+}
+
 $userid;
 $mysqli = new mysqli('localhost', 'caluser', 'calpass', 'calendar');
 
@@ -8,7 +15,7 @@ if($mysqli->connect_errno){
 	exit;
 } 
 
-$stmt_get = $mysqli->prepare("select id from users where username='". $_GET['username'] . "'"); 
+$stmt_get = $mysqli->prepare("select id from users where username='". $_POST['username'] . "'"); 
 
 if (!$stmt_get){
 	printf("%d\n", 1);//query failed; return 1
@@ -26,10 +33,11 @@ $stmt_get->close();
 $time;
 $event;
 $day;
-$month=$_GET['month'];
-$year=$_GET['year'];
+$month=$_POST['month'];
+$year=$_POST['year'];
+$id;
 
-$stmt_store = $mysqli->prepare("select event, time, day from events where userid='".$userid."' and month='".$month."' and year='".$year."' order by time");
+$stmt_store = $mysqli->prepare("select event, time, day, id from events where userid='".$userid."' and month='".$month."' and year='".$year."' order by time");
 
 if (!$stmt_store){
 	printf("%d\n", 2);//query failed; return 2
@@ -39,7 +47,7 @@ if (!$stmt_store){
 
 $stmt_store->execute();
 
-$stmt_store->bind_result($event,$time,$day);
+$stmt_store->bind_result($event,$time,$day,$id);
 $index = 0;
 $dayindex = 0;
 echo "{";
@@ -47,7 +55,7 @@ while($stmt_store->fetch()){
 	if($index!=0){
 		echo ",";
 	}
-	echo "\"".$index."\":{\"event\":\"".htmlspecialchars($event)."\",\"time\":\"".htmlspecialchars($time)."\",\"day\":\"".htmlspecialchars($day)."\"}";
+	echo "\"".$index."\":{\"event\":\"".htmlspecialchars($event)."\",\"time\":\"".htmlspecialchars($time)."\",\"day\":\"".htmlspecialchars($day)."\",\"id\":\"".htmlspecialchars($id)."\"}";
 	$index = $index + 1;
 }
 if($index!=0){

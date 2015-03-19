@@ -4,10 +4,10 @@
 session_start();
 
 //CHECK CSRF TOKEN
-/*if($_SESSION['token'] !== $_POST['token']){
+if($_SESSION['token'] !== $_POST['token']){
   die("Request forgery detected");
 }
-*/
+
 $userid;
 $mysqli = new mysqli('localhost', 'caluser', 'calpass', 'calendar');
 
@@ -16,7 +16,7 @@ if($mysqli->connect_errno){
 	exit;
 } 
 
-$stmt_get = $mysqli->prepare("select id from users where username='". $_GET['username'] . "'"); 
+$stmt_get = $mysqli->prepare("select id from users where username='". $_POST['username'] . "'"); 
 
 if (!$stmt_get){
 	printf("%d\n", 1);//query failed; return 1
@@ -38,7 +38,7 @@ if (!$stmt_store){
 	exit;
 }
 
-$stmt_store->bind_param('ssiisi', $_GET['event'], $_GET['month'], $_GET['year'], $_GET['day'], $_GET['time'], $userid);
+$stmt_store->bind_param('ssiisi', $_POST['event'], $_POST['month'], $_POST['year'], $_POST['day'], $_POST['time'], $userid);
 
 $stmt_store->execute();
 
