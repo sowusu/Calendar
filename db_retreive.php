@@ -33,11 +33,12 @@ $stmt_get->close();
 $time;
 $event;
 $day;
+$tag;
 $month=$_POST['month'];
 $year=$_POST['year'];
 $id;
 
-$stmt_store = $mysqli->prepare("select event, time, day, id from events where userid='".$userid."' and month='".$month."' and year='".$year."' order by time");
+$stmt_store = $mysqli->prepare("select event, time, day, id, tag from events where userid='".$userid."' and month='".$month."' and year='".$year."' order by time");
 
 if (!$stmt_store){
 	printf("%d\n", 2);//query failed; return 2
@@ -47,7 +48,7 @@ if (!$stmt_store){
 
 $stmt_store->execute();
 
-$stmt_store->bind_result($event,$time,$day,$id);
+$stmt_store->bind_result($event,$time,$day,$id,$tag);
 $index = 0;
 $dayindex = 0;
 echo "{";
@@ -55,7 +56,7 @@ while($stmt_store->fetch()){
 	if($index!=0){
 		echo ",";
 	}
-	echo "\"".$index."\":{\"event\":\"".htmlspecialchars($event)."\",\"time\":\"".htmlspecialchars($time)."\",\"day\":\"".htmlspecialchars($day)."\",\"id\":\"".htmlspecialchars($id)."\"}";
+	echo "\"".$index."\":{\"event\":\"".htmlspecialchars($event)."\",\"time\":\"".htmlspecialchars($time)."\",\"day\":\"".htmlspecialchars($day)."\",\"id\":\"".htmlspecialchars($id)."\",\"tag\":\"".$tag."\"}";
 	$index = $index + 1;
 }
 if($index!=0){

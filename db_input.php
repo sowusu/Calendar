@@ -31,14 +31,14 @@ $stmt_get->fetch();
 
 $stmt_get->close();
 
-$stmt_store = $mysqli->prepare("insert into events (event, month, year, day, time, userid) values (?,?,?,?,?,?)");
+$stmt_store = $mysqli->prepare("insert into events (event, month, year, day, time, userid, tag) values (?,?,?,?,?,?,?)");
 
 if (!$stmt_store){
 	printf("%d\n", 2);//query failed; return 1
 	exit;
 }
 
-$stmt_store->bind_param('ssiisi', $_POST['event'], $_POST['month'], $_POST['year'], $_POST['day'], $_POST['time'], $userid);
+$stmt_store->bind_param('ssiisis', $_POST['event'], $_POST['month'], $_POST['year'], $_POST['day'], $_POST['time'], $userid, $_POST['tag']);
 
 $stmt_store->execute();
 

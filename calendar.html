@@ -30,6 +30,21 @@
 
 		</button>
 		<strong id="MonthName">Month</strong>
+		<button  id="DisplayHome" class = "btn btn-info btn-sm">
+			Toggle Home Tag
+		</button>
+		<button  id="DisplayWork" class = "btn btn-info btn-sm">
+			Toggle Work Tag
+		</button>
+		<button  id="DisplaySchool" class = "btn btn-info btn-sm">
+			Toggle School Tag
+		</button>
+		<button  id="DisplayBirthdays" class = "btn btn-info btn-sm">
+			Toggle Birthdays Tag
+		</button>
+		<button  id="DisplayPlay" class = "btn btn-info btn-sm">
+			Toggle Play Tag
+		</button>
 		<button  id="NextMonth" class = "btn btn-info btn-sm">
 			Next Month
 		</button>
@@ -38,6 +53,14 @@
 
 		<label>Event: </label><textarea id="Event" placeholder = "Event Description"></textarea>
 
+		<label>Category: </label><select id="Category">
+		<option> General </option>
+		<option> Home </option>
+		<option> Work </option>
+		<option> School </option>
+		<option> Birthdays </option>
+		<option> Play </option>
+		</select>
 
 		<label>Month: </label><select id="Month" onchange='updateSelectedMonth(); updateDaySelect();'>
 		</select>
@@ -114,6 +137,11 @@
 <script type="text/javascript">
 var current_user = "";//initialize no current user
 var token;//CSRF token set at login and unset at logout
+var useHome = true;//tells us whether or not to display Home tag
+var useWork = true;//tells us whether or not to display Work tag
+var useSchool = true;//tells us whether or not to display School tag
+var useBirthdays = true;//tells us whether or not to display Birthdays tag
+var usePlay = true;//tells us whether or not to display Play tag
 $("#logout-box").hide();
 
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -185,6 +213,7 @@ function getDaysInMonth(){
 	//gets the number of days in the month
 	return currentMonth.nextMonth().getDateObject(0).getDate();
 }
+
 function addToCalendar(crntEvent){
 	//adds events for a whole month
 	var newTr = document.createElement("tr");
@@ -211,9 +240,18 @@ function addToCalendar(crntEvent){
 		newTd.appendChild(document.createElement("br"));
 		for(var j = 0; j < events.length; j++){
 			var eventDiv = document.createElement("div");
-			var eventNode = document.createElement("p");
-			eventNode.innerHTML = events[j];
-			eventDiv.appendChild(eventNode);
+			var eventTagDiv = document.createElement("div");
+			var eventTimeDiv = document.createElement("div");
+			var eventTextDiv = document.createElement("div");
+			eventTagDiv.setAttribute("class", "tag");
+			eventTimeDiv.setAttribute("class", "time");
+			eventTextDiv.setAttribute("class", "text");
+			eventTagDiv.innerHTML = events[j][0];
+			eventTimeDiv.innerHTML = events[j][1];
+			eventTextDiv.innerHTML = events[j][2];
+			eventDiv.appendChild(eventTagDiv);
+			eventDiv.appendChild(eventTimeDiv);
+			eventDiv.appendChild(eventTextDiv);
 			eventDiv.id = eventIds[j];
 			$(eventDiv).one("click",editEvent.bind(eventDiv));
 			newTd.appendChild(eventDiv);
@@ -235,10 +273,39 @@ function addToCalendar(crntEvent){
 }
 
 function editEvent(event){
-	var text = this.childNodes[0].innerHTML;
 	this.childNodes[0].hidden = true;
-	var oldTime = text.substring(0,5);
-	var oldEvent = text.substring(6);
+	this.childNodes[1].hidden = true;
+	this.childNodes[2].hidden = true;
+	var oldTag = this.childNodes[0].innerHTML;
+	var oldTime = this.childNodes[1].innerHTML;
+	var oldEvent = this.childNodes[2].innerHTML;
+	var tag = document.createElement("select");
+	var genOpt = document.createElement("option");
+	genOpt.value = "General";
+	genOpt.appendChild(document.createTextNode("General"));
+	tag.appendChild(genOpt);
+	var homeOpt = document.createElement("option");
+	homeOpt.value = "Home";
+	homeOpt.appendChild(document.createTextNode("Home"));
+	tag.appendChild(homeOpt);
+	var workOpt = document.createElement("option");
+	workOpt.value = "Work";
+	workOpt.appendChild(document.createTextNode("Work"));
+	tag.appendChild(workOpt);
+	var schoolOpt = document.createElement("option");
+	schoolOpt.value = "School";
+	schoolOpt.appendChild(document.createTextNode("School"));
+	tag.appendChild(schoolOpt);
+	var birthOpt = document.createElement("option");
+	birthOpt.value = "Birthdays";
+	birthOpt.appendChild(document.createTextNode("Birthdays"));
+	tag.appendChild(birthOpt);
+	var playOpt = document.createElement("option");
+	playOpt.value = "Play";
+	playOpt.appendChild(document.createTextNode("Play"));
+	tag.appendChild(playOpt);
+	tag.value = oldTag;
+	this.appendChild(tag);
 	var timer = document.createElement("select");
 	for(var j = 0; j <= 23; j++){
 		for(var i = 0; i <= 30; i+=30){
@@ -281,9 +348,10 @@ function deleteEvent(event){
 
 function confirmEdit(event){
 	var id = this.id;
-	var eventText = this.childNodes[2].value;
-	var time = this.childNodes[1].value;
-	$.ajax({url:"db_edit.php",type:"POST",data:{"id":id, "eventText":eventText, "time":time, "token":token}});
+	var eventText = this.childNodes[5].value;
+	var time = this.childNodes[4].value;
+	var tag = this.childNodes[3].value;
+	$.ajax({url:"db_edit.php",type:"POST",data:{"id":id, "tag":tag, "eventText":eventText, "time":time, "token":token}});
 	setTimeout(function(){
 		removeDates();
 		displayDates();
@@ -297,8 +365,13 @@ function eventsOnDay(day, jsondata){
 	var maxindex = jsondata.maxindex;
 	var arr = [];
 	for(var i=0;i<maxindex;i++){
-		if(jsondata[i].day == day){
-			arr.push(jsondata[i].time + " " + jsondata[i].event);
+		var tag = jsondata[i].tag;
+		if(jsondata[i].day == day && (tag=="General" || (tag=="Home" && useHome) || (tag=="Work" && useWork) || (tag=="School" && useSchool) || (tag=="Play" && usePlay) || (tag=="Birthdays" && useBirthdays))){
+			var subarr = [];
+			subarr.push(jsondata[i].tag);
+			subarr.push(jsondata[i].time);
+			subarr.push(jsondata[i].event);
+			arr.push(subarr);
 		}
 	}
 	return arr;
@@ -308,7 +381,8 @@ function eventIdsOnDay(day, jsondata){
 	var maxindex = jsondata.maxindex;
 	var arr = [];
 	for(var i=0;i<maxindex;i++){
-		if(jsondata[i].day == day){
+		var tag = jsondata[i].tag;
+		if(jsondata[i].day == day && (tag=="General" || (tag=="Home" && useHome) || (tag=="Work" && useWork) || (tag=="School" && useSchool) || (tag=="Play" && usePlay) || (tag=="Birthdays" && useBirthdays))){
 			arr.push(jsondata[i].id);
 		}
 	}
@@ -370,10 +444,11 @@ function addEvent(){
 	var y = document.getElementById("Year").value;
 	var d = document.getElementById("Day").value;
 	var t = document.getElementById("Time").value;
+	var tag = document.getElementById("Category").value;
 	var u = current_user;
 	xmlHttp.open("POST", "db_input.php", true);
 	xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-	xmlHttp.send("event=" + e + "&month=" + months[m] + "&year=" + y + "&day=" + d + "&time=" + t + "&username=" + u + "&token=" +token);
+	xmlHttp.send("event=" + e + "&month=" + months[m] + "&year=" + y + "&day=" + d + "&time=" + t + "&tag=" + tag + "&username=" + u + "&token=" +token);
 }
 function ajaxCallback(event){
 	//alert( "Your file contains the text: " + event.target.responseText );
@@ -391,6 +466,42 @@ document.getElementById("PrevMonth").addEventListener("click", function(event){
 }, false);
 document.getElementById("NextMonth").addEventListener("click", function(event){
 	currentMonth = currentMonth.nextMonth();
+	removeDates();
+	displayDates();
+	updateMonth();
+}, false);
+
+document.getElementById("DisplayHome").addEventListener("click", function(event){
+	useHome = !useHome;
+	removeDates();
+	displayDates();
+	updateMonth();
+}, false);
+
+
+document.getElementById("DisplayWork").addEventListener("click", function(event){
+	useWork = !useWork;
+	removeDates();
+	displayDates();
+	updateMonth();
+}, false);
+
+document.getElementById("DisplaySchool").addEventListener("click", function(event){
+	useSchool = !useSchool;
+	removeDates();
+	displayDates();
+	updateMonth();
+}, false);
+
+document.getElementById("DisplayPlay").addEventListener("click", function(event){
+	usePlay = !usePlay;
+	removeDates();
+	displayDates();
+	updateMonth();
+}, false);
+
+document.getElementById("DisplayBirthdays").addEventListener("click", function(event){
+	useBirthdays = !useBirthdays;
 	removeDates();
 	displayDates();
 	updateMonth();

@@ -15,16 +15,17 @@ if($mysqli->connect_errno){
 
 $time = $_POST['time'];
 $event = $_POST['eventText'];
+$tag = $_POST['tag'];
 $id = $_POST['id'];
 
-$stmt_store = $mysqli->prepare("update events set event=?, time=? where id='".$id."'");
+$stmt_store = $mysqli->prepare("update events set event=?, time=?, tag=? where id='".$id."'");
 
 if (!$stmt_store){
 	printf("%d\n", 2);//query failed; return 2
 	printf("Query Prep Failed: %s\n", $mysqli->error);
 	exit;
 }
-$stmt_store->bind_param('ss',$event,$time);
+$stmt_store->bind_param('sss',$event,$time,$tag);
 
 $stmt_store->execute();
 
