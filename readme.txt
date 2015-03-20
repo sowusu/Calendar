@@ -36,6 +36,11 @@ grant select, insert, update, delete on calendar.* to 'caluser'@'localhost';
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 |
 +--------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
+alter table events add column tag VARCHAR(10) not null default 'General';
+update events set tag='General';
+alter table users add column shared blob;
+
+
 MongoDB
 
 AddEvent
