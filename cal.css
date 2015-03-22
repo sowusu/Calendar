@@ -8,26 +8,51 @@
 	/*border: 1px solid black;*/
 }
 
-#show-event-dialog {
-	position:relative;
-	z-index: 5;
-}
-
 #month-title-bar{
 
 	width: 100%;
 	white-space: nowrap !important;
-	border:1px solid red;
+	/*border:1px solid red;*/
 	
 
 }
 
+.logout_id{
+	position:inherit;
+}
+
+.adddddd{
+	position:fixed;
+}
+
+.fixed{
+	position:fixed;
+	top:0px;
+}
+
+#table-options-header.fixed{
+	left: 200px;
+}
+
+.alert-primary{
+
+	color: #ffffff;
+	background-color: #0066ff !important;
+	border-color: #0033cc;
+}
+
+
 .month-title-bar-element{
 
-	border:1px dashed green;
+	position: inherit;
+	/*border:1px dashed green;*/
 	white-space: normal !important;
 	display:inline-block;
 
+}
+
+.btn-group{
+	position: inherit;
 }
 
 th{
@@ -52,7 +77,7 @@ td {
 	height: 100px;
 	
 	padding: 10px;
-	font-size: 1.5em;
+	font-size: 0.9em;
 }
 
 table{
@@ -83,6 +108,7 @@ table{
 .event-element-class textarea{
 	width: inherit;
 }
+
 header{
 	text-align: center;
 	font-size: 3em;
@@ -94,10 +120,8 @@ header{
 
 #show-event-dialog{
 
-	position: relative;
-  	top: 50%;
-  	transform: translateY(-50%);
-	border: 2px dashed black;
+	z-index: 5;
+	/*border: 2px dashed black;*/
 	
 	display:inline-block;
 }
@@ -118,7 +142,7 @@ header{
 #navbar {
 	/*float: right;*/
 	display:inline-block;
-	border: 1px dashed green;
+	/*border: 1px dashed green;*/
 	width:20%;
 	white-space: normal;
 }

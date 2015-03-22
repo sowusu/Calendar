@@ -10,7 +10,7 @@ $("#logout_id").click(function(){
 	$("#username").val("");
 	$("#password").val("");
 	$("#login-box").toggle();
-	$("#logout-box").toggle();
+	$("#logout_id").toggle();
 	token = "";
 	current_user = "";
 	removeDates();
@@ -39,7 +39,7 @@ $("#login_id").click(function(){
 				if (result.success){
 					//alert(result.message);
 					$("#login-box").toggle();
-					$("#logout-box").toggle();
+					$("#logout_id").toggle();
 					token = result.token;//created csrf token
 					current_user = $("#username").val();
 					removeDates();
