@@ -25,8 +25,8 @@
 <div id = "page" class = "container-fluid">
 
 	<div id = "show-event-dialog">
-		<button type = "button" class="btn btn-success" data-toggle="popover" tabindex="0" data-placement = "right" title="Add an event..." data-content=""><span class = "glyphicon glyphicon-plus ctrl-btns"></span></button>
-		
+		<button type = "button" class="btn btn-success" data-toggle="popover" tabindex="0" data-placement = "right" title="Add an event..." data-content="" id = "adddddd"><span class = "glyphicon glyphicon-plus ctrl-btns"></span></button>
+		<button type = "button" class="btn btn-warning" id = "logout_id" ><span class = "glyphicon glyphicon-off ctrl-btns"></span></button>
 	</div>
 	
 	<div id = "sidebar" class = "pull-left">
@@ -59,34 +59,35 @@
 	</div>
 
 	<div id = "cal-container">
-		<div id = "month-title-bar" class = "text-center">
-			<div class = "month-title-bar-element"><span class = "glyphicon glyphicon-chevron-left ctrl-btns" id = "PrevMonth" ></span></div>
-			<div class = "month-title-bar-element" id = "MonthName" ><h1>  Month </h1></div>
-			<div class = "month-title-bar-element "><span class = "glyphicon glyphicon-chevron-right ctrl-btns" id="NextMonth" ></span></div>
+		<div id = "table-options-header">
+			<div id = "month-title-bar" class = "text-center">
+				<div class = "month-title-bar-element"><span class = "glyphicon glyphicon-chevron-left ctrl-btns" id = "PrevMonth" ></span></div>
+				<div class = "month-title-bar-element" id = "MonthName" ><h1>  Month </h1></div>
+				<div class = "month-title-bar-element "><span class = "glyphicon glyphicon-chevron-right ctrl-btns" id="NextMonth" ></span></div>
+			</div>
+
+
+			<div class="btn-group" data-toggle="buttons">
+				<label class="btn btn-default active" id="DisplayGeneral">
+				    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check"></span> General
+				</label>
+				<label class="btn btn-primary active" id="DisplayHome">
+				    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check"></span> Home
+				</label>
+				<label class="btn btn-success active" id="DisplayWork">
+				    <input type="checkbox" autocomplete="off" checked><span class = "glyphicon glyphicon-check" ></span> Work
+				</label>
+				<label class="btn btn-info active" id="DisplayPlay">
+				    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check" ></span> Play
+				</label>
+				<label class="btn btn-warning active" id="DisplayBirthdays">
+				    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check" ></span> Birthdays
+				</label>
+				<label class="btn btn-danger active" id="DisplaySchool">
+				    <input type="checkbox" autocomplete="off" checked><span class = "glyphicon glyphicon-check" ></span> School
+				</label>
+			</div>
 		</div>
-
-
-		<div class="btn-group" data-toggle="buttons">
-			<label class="btn btn-default active">
-			    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check"></span> General
-			</label>
-			<label class="btn btn-primary active" id="DisplayHome">
-			    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check"></span> Home
-			</label>
-			<label class="btn btn-success active" id="DisplayWork">
-			    <input type="checkbox" autocomplete="off" checked><span class = "glyphicon glyphicon-check" ></span> Work
-			</label>
-			<label class="btn btn-info active" id="DisplayPlay">
-			    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check" ></span> Play
-			</label>
-			<label class="btn btn-warning active" id="DisplayBirthdays">
-			    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check" ></span> Birthdays
-			</label>
-			<label class="btn btn-danger active" id="DisplaySchool">
-			    <input type="checkbox" autocomplete="off" checked><span class = "glyphicon glyphicon-check" ></span> School
-			</label>
-		</div>
-
 		<table id="dates" class = "table" border="1">
 			<tr>
 				<th>
@@ -117,11 +118,11 @@
 	<div id = "navbar" class="pull-right">
 		<div id = "login-box" class = "form-inline">
 			<div class = "form-group">
-		    <label for="username"><strong> Username </strong></label>
+		    <label for="username"><span class = "glyphicon glyphicon-user"></span><strong> Username </strong></label>
 		    <input type="text" id = "username" placeholder = "Enter username" required>
 			</div>
 			<div class = "form-group">
-		    <label  for="password"><strong>Password</strong></label>
+		    <label  for="password"><span class = "glyphicon glyphicon-asterisk"></span><strong> Password</strong></label>
 		    <input type="password" id = "password"  placeholder = "Password" required>
 		    <div class = "form-group">
 		    <button id = "login_id" class = "btn btn-default">
@@ -131,11 +132,6 @@
 		    SIGN UP </button>
 		   
 		   <p id = "login-error" style = "display: none"></p>
-		</div>
-		<div id = "logout-box" >
-		 	<button id = "logout_id" >
-		 		LOGOUT
-		 	</button>
 		</div>
 
 	</div>
@@ -148,14 +144,17 @@
 <script src = "bootstrap3/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
+
+
 var current_user = "";//initialize no current user
 var token;//CSRF token set at login and unset at logout
+var useGeneral = true;//tells us whether or not to display General tag
 var useHome = true;//tells us whether or not to display Home tag
 var useWork = true;//tells us whether or not to display Work tag
 var useSchool = true;//tells us whether or not to display School tag
 var useBirthdays = true;//tells us whether or not to display Birthdays tag
 var usePlay = true;//tells us whether or not to display Play tag
-$("#logout-box").hide();
+$("#logout_id").hide();
 var colors = ['default', 'primary', 'success', 'info', 'warning', 'danger'];
 var cats = ['General', 'Home', 'Work', 'Play', 'Birthdays', 'School'];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -163,19 +162,19 @@ var months = ["January", "February", "March", "April", "May", "June", "July", "A
 function getColor(cat_name){
 
 	if (cat_name === "Home"){
-		alert(cat_name);
+		//alert(cat_name);
 	}
 	var i;
 	var idx;
 	for (i = 0; i < cats.length; i++){
 		if (cat_name === "Home"){
-			alert("matching " +  cats[i]);
+			//alert("matching " +  cats[i]);
 		}
 		
 		if (cats[i] === cat_name){
 			if (cat_name === "Home"){
-				alert("match found for:" + cats[i]);
-				alert("returning: " + colors[i]);
+				//alert("match found for:" + cats[i]);
+				//alert("returning: " + colors[i]);
 			}
 
 			return colors[i];
@@ -275,13 +274,18 @@ function addToCalendar(crntEvent){
 		}
 		var events = eventsOnDay(i+1, jsondata);
 		var eventIds = eventIdsOnDay(i+1, jsondata);
-		var newTd = document.createElement("td");	
-		newTd.appendChild(document.createTextNode((i+1)));
+		var newTd = document.createElement("td");
+		var date_number = document.createElement("h3");	
+		date_number.innerHTML = "" + (i+1);
+		newTd.appendChild(date_number);
+
+
 		newTd.appendChild(document.createElement("br"));
 		for(var j = 0; j < events.length; j++){
+			//adding events for a particular date
 			var event_color = getColor(events[j][0]);
 			var eventDiv = document.createElement("div");
-			alert("setting this alert color: " + event_color);
+			//alert("setting this alert color: " + event_color);
 			eventDiv.setAttribute("class", "alert alert-" + event_color);
 			//eventDiv.setAttribute("class", "alert alert-info");
 			var eventTagDiv = document.createElement("div");
@@ -525,7 +529,39 @@ document.getElementById("NextMonth").addEventListener("click", function(event){
 	updateMonth();
 }, false);
 
+var initgen= 'glyphicon-check';
+var newgen = 'glyphicon-unchecked';
+var inithome= 'glyphicon-check';
+var newhome = 'glyphicon-unchecked';
+var initwork= 'glyphicon-check';
+var newwork = 'glyphicon-unchecked';
+var initsch= 'glyphicon-check';
+var newsch = 'glyphicon-unchecked';
+var initplay= 'glyphicon-check';
+var newplay = 'glyphicon-unchecked';
+var initbirth= 'glyphicon-check';
+var newbirth = 'glyphicon-unchecked';
+
+
+document.getElementById("DisplayGeneral").addEventListener("click", function(event){
+	$(this).children().switchClass(initgen, newgen, 0);
+	var temp = initgen;
+	initgen = newgen;
+	newgen = temp;
+
+
+	useGeneral = !useGeneral;
+	removeDates();
+	displayDates();
+	updateMonth();
+}, false);
+
 document.getElementById("DisplayHome").addEventListener("click", function(event){
+	$(this).children().switchClass(inithome, newhome, 0);
+	var temp = inithome;
+	inithome = newhome;
+	newhome = temp;
+
 	useHome = !useHome;
 	removeDates();
 	displayDates();
@@ -534,6 +570,11 @@ document.getElementById("DisplayHome").addEventListener("click", function(event)
 
 
 document.getElementById("DisplayWork").addEventListener("click", function(event){
+	$(this).children().switchClass(initwork, newwork, 0);
+	var temp = initwork;
+	initwork = newwork;
+	newwork = temp;
+
 	useWork = !useWork;
 	removeDates();
 	displayDates();
@@ -541,6 +582,11 @@ document.getElementById("DisplayWork").addEventListener("click", function(event)
 }, false);
 
 document.getElementById("DisplaySchool").addEventListener("click", function(event){
+	$(this).children().switchClass(initsch, newsch, 0);
+	var temp = initsch;
+	initsch = newsch;
+	newsch = temp;
+
 	useSchool = !useSchool;
 	removeDates();
 	displayDates();
@@ -548,6 +594,11 @@ document.getElementById("DisplaySchool").addEventListener("click", function(even
 }, false);
 
 document.getElementById("DisplayPlay").addEventListener("click", function(event){
+	$(this).children().switchClass(initplay, newplay, 0);
+	var temp = initplay;
+	initplay = newplay;
+	newplay = temp;
+
 	usePlay = !usePlay;
 	removeDates();
 	displayDates();
@@ -555,6 +606,11 @@ document.getElementById("DisplayPlay").addEventListener("click", function(event)
 }, false);
 
 document.getElementById("DisplayBirthdays").addEventListener("click", function(event){
+	$(this).children().switchClass(initbirth, newbirth, 0);
+	var temp = initbirth;
+	initbirth = newbirth;
+	newbirth = temp;
+
 	useBirthdays = !useBirthdays;
 	removeDates();
 	displayDates();
@@ -591,6 +647,31 @@ $('[data-toggle="popover"]').popover({
 	addEvent();
 	removeDates();
 	displayDates();
+});
+
+var headertop = $("#table-options-header").offset().top;
+var evntbtns = $("#show-event-dialog").offset().top;
+console.log(headertop);
+
+$(window).scroll(function(){
+
+	var curtop = $(this).scrollTop();
+	if (curtop >= headertop){
+		$("#table-options-header").addClass('fixed');
+	}
+	else{
+		$("#table-options-header").removeClass('fixed');
+	}
+
+	if (curtop >= evntbtns){
+
+		$("#show-event-dialog").addClass('fixed');
+	}
+	else{
+		$("#show-event-dialog").removeClass('fixed');
+	}
+
+
 });
 </script>
 </body>
