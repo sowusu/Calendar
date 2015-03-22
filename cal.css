@@ -1,9 +1,88 @@
 
-button #PrevMonth {
-	display: inline;
+
+.ctrl-btns{
+
+	font-size: 3em;
+
+	
+	/*border: 1px solid black;*/
 }
 
+#show-event-dialog {
+	position:relative;
+	z-index: 5;
+}
 
+#month-title-bar{
+
+	width: 100%;
+	white-space: nowrap !important;
+	border:1px solid red;
+	
+
+}
+
+.month-title-bar-element{
+
+	border:1px dashed green;
+	white-space: normal !important;
+	display:inline-block;
+
+}
+
+th{
+	font-family: Century Gothic, sans-serif;
+	font-size: 1.5em;
+	overflow: hidden;
+
+}
+
+th, td{
+	width: 130px;
+	
+}
+
+.no-date{
+	background-color: #dadada;
+}
+
+td {
+
+	vertical-align: top;
+	height: 100px;
+	
+	padding: 10px;
+	font-size: 1.5em;
+}
+
+table{
+
+	table-layout: fixed;
+	width:100%;
+}
+
+#Year{
+	width: 50px;
+}
+
+#Day{
+	width: 40px;
+}
+
+#MonthName{
+
+	width: 85% !important;
+	display: inline-block;
+	font-size: 3em;
+}
+
+.alert{
+	font-size: 1em !important;
+}
+
+.event-element-class textarea{
+	width: inherit;
+}
 header{
 	text-align: center;
 	font-size: 3em;
@@ -13,10 +92,20 @@ header{
 	/*border: 2px dashed black;*/
 }
 
+#show-event-dialog{
+
+	position: relative;
+  	top: 50%;
+  	transform: translateY(-50%);
+	border: 2px dashed black;
+	
+	display:inline-block;
+}
+
 #sidebar {
 	border: 2px solid black;
-	width: 30%;
-	display:inline-block;
+	width: 20%;
+	display:none;
 	margin-left: -20px;
 	/*float: left;*/
 	white-space: normal;
@@ -30,7 +119,6 @@ header{
 	/*float: right;*/
 	display:inline-block;
 	border: 1px dashed green;
-	margin-right:-20px;
 	width:20%;
 	white-space: normal;
 }
@@ -39,11 +127,10 @@ header{
 	border: 1px dashed brown;
 }
 
-table {
+#cal-container {
 	display:inline-block;
-	width: 50% !important;
-	margin-left: 10px;
-	margin-right: 10px;
+	width: 70% !important;
+	margin: auto;
 	border: 2px solid white;
 	white-space: normal;
 }
@@ -51,4 +138,5 @@ table {
 #page {
 	/*border: 2px solid pink;*/
 	white-space: nowrap;
+	font-family: ‘Palatino Linotype’, ‘Book Antiqua’, Palatino, serif;
 }

@@ -5,10 +5,11 @@
 
 <!-- Jquery -->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-
+<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 <!-- Bootstrap -->
-<link href="bootstrap/css/bootstrap.css" rel="stylesheet" media="screen">
+<link href="bootstrap3/css/bootstrap.css" rel="stylesheet" media="screen">
 <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet" media="screen">
+<link href="bootstrap3/css/bootstrap-theme.css" rel="stylesheet" media="screen">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="cal.css" type="text/css"/>
 
@@ -22,33 +23,14 @@
 
 
 <div id = "page" class = "container-fluid">
+
+	<div id = "show-event-dialog">
+		<button type = "button" class="btn btn-success" data-toggle="popover" tabindex="0" data-placement = "right" title="Add an event..." data-content=""><span class = "glyphicon glyphicon-plus ctrl-btns"></span></button>
+		
+	</div>
 	
 	<div id = "sidebar" class = "pull-left">
-		<div class = "control-buttons">
-		<button id="PrevMonth" class = "btn btn-info btn-sm">
-		Previous Month
-
-		</button>
-		<strong id="MonthName">Month</strong>
-		<button  id="DisplayHome" class = "btn btn-info btn-sm">
-			Toggle Home Tag
-		</button>
-		<button  id="DisplayWork" class = "btn btn-info btn-sm">
-			Toggle Work Tag
-		</button>
-		<button  id="DisplaySchool" class = "btn btn-info btn-sm">
-			Toggle School Tag
-		</button>
-		<button  id="DisplayBirthdays" class = "btn btn-info btn-sm">
-			Toggle Birthdays Tag
-		</button>
-		<button  id="DisplayPlay" class = "btn btn-info btn-sm">
-			Toggle Play Tag
-		</button>
-		<button  id="NextMonth" class = "btn btn-info btn-sm">
-			Next Month
-		</button>
-		</div>
+		
 		<!-- buttons and options go here-->
 
 		<label>Event: </label><textarea id="Event" placeholder = "Event Description"></textarea>
@@ -65,9 +47,9 @@
 		<label>Month: </label><select id="Month" onchange='updateSelectedMonth(); updateDaySelect();'>
 		</select>
 
-		<label>Year: </label><input type="number" min="0" step="1" value="2015" id="Year" onchange='updateSelectedMonth(); updateDaySelect();'>
+		<label>Year: </label><input type="number" min="0" size = "5" step="1" value="2015" id="Year" onchange='updateSelectedMonth(); updateDaySelect();'>
 
-		<label>Day: </label><input type="number" min="1" max="7" step="1" value="1" id="Day">
+		<label>Day: </label><input type="number" size = "1" min="1" max="7" step="1" value="1" id="Day">
 		</select>
 
 		<label>Time: </label><select id="Time">
@@ -76,41 +58,70 @@
 		<button id="addEvent" class = "btn btn-primary">Submit Event</button>
 	</div>
 
-	
-	<table id="dates" class = "table" border="1">
-		<tr>
-			<th>
-			Sunday
-			</th>
-			<th>
-			Monday
-			</th>
-			<th>
-			Tuesday
-			</th>
-			<th>
-			Wednesday
-			</th>
-			<th>
-			Thursday
-			</th>
-			<th>
-			Friday
-			</th>
-			<th>
-			Saturday
-			</th>
-		</tr>
-	</table>
+	<div id = "cal-container">
+		<div id = "month-title-bar" class = "text-center">
+			<div class = "month-title-bar-element"><span class = "glyphicon glyphicon-chevron-left ctrl-btns" id = "PrevMonth" ></span></div>
+			<div class = "month-title-bar-element" id = "MonthName" ><h1>  Month </h1></div>
+			<div class = "month-title-bar-element "><span class = "glyphicon glyphicon-chevron-right ctrl-btns" id="NextMonth" ></span></div>
+		</div>
+
+
+		<div class="btn-group" data-toggle="buttons">
+			<label class="btn btn-default active">
+			    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check"></span> General
+			</label>
+			<label class="btn btn-primary active" id="DisplayHome">
+			    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check"></span> Home
+			</label>
+			<label class="btn btn-success active" id="DisplayWork">
+			    <input type="checkbox" autocomplete="off" checked><span class = "glyphicon glyphicon-check" ></span> Work
+			</label>
+			<label class="btn btn-info active" id="DisplayPlay">
+			    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check" ></span> Play
+			</label>
+			<label class="btn btn-warning active" id="DisplayBirthdays">
+			    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check" ></span> Birthdays
+			</label>
+			<label class="btn btn-danger active" id="DisplaySchool">
+			    <input type="checkbox" autocomplete="off" checked><span class = "glyphicon glyphicon-check" ></span> School
+			</label>
+		</div>
+
+		<table id="dates" class = "table" border="1">
+			<tr>
+				<th>
+				Sunday
+				</th>
+				<th>
+				Monday
+				</th>
+				<th>
+				Tuesday
+				</th>
+				<th>
+				Wednesday
+				</th>
+				<th>
+				Thursday
+				</th>
+				<th>
+				Friday
+				</th>
+				<th>
+				Saturday
+				</th>
+			</tr>
+		</table>
+	</div>
 
 	<div id = "navbar" class="pull-right">
 		<div id = "login-box" class = "form-inline">
 			<div class = "form-group">
-		    <label class="sr-only" for="username"><strong> Username </strong></label>
+		    <label for="username"><strong> Username </strong></label>
 		    <input type="text" id = "username" placeholder = "Enter username" required>
 			</div>
 			<div class = "form-group">
-		    <label class="sr-only" for="password"><strong>Password</strong></label>
+		    <label  for="password"><strong>Password</strong></label>
 		    <input type="password" id = "password"  placeholder = "Password" required>
 		    <div class = "form-group">
 		    <button id = "login_id" class = "btn btn-default">
@@ -126,6 +137,7 @@
 		 		LOGOUT
 		 	</button>
 		</div>
+
 	</div>
 
 
@@ -133,6 +145,7 @@
 </div>
 <script src="calendarHelper.js"></script>
 <script src="login.js" ></script>
+<script src = "bootstrap3/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
 var current_user = "";//initialize no current user
@@ -143,8 +156,34 @@ var useSchool = true;//tells us whether or not to display School tag
 var useBirthdays = true;//tells us whether or not to display Birthdays tag
 var usePlay = true;//tells us whether or not to display Play tag
 $("#logout-box").hide();
-
+var colors = ['default', 'primary', 'success', 'info', 'warning', 'danger'];
+var cats = ['General', 'Home', 'Work', 'Play', 'Birthdays', 'School'];
 var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+function getColor(cat_name){
+
+	if (cat_name === "Home"){
+		alert(cat_name);
+	}
+	var i;
+	var idx;
+	for (i = 0; i < cats.length; i++){
+		if (cat_name === "Home"){
+			alert("matching " +  cats[i]);
+		}
+		
+		if (cats[i] === cat_name){
+			if (cat_name === "Home"){
+				alert("match found for:" + cats[i]);
+				alert("returning: " + colors[i]);
+			}
+
+			return colors[i];
+		}
+	}
+	return "no-color";
+
+}
 
 var selectedMonth = new Month(2015, 0);
 
@@ -223,7 +262,8 @@ function addToCalendar(crntEvent){
 	var startDay = getMonthStartDay();
 	for(var i = 0; i < startDay; i++){
 		var newTd = document.createElement("td");
-		newTd.appendChild(document.createTextNode("X"));
+		newTd.setAttribute("class", "no-date");
+		newTd.appendChild(document.createTextNode(" "));
 		newTr.appendChild(newTd);
 		trIndex++;
 	}
@@ -236,22 +276,35 @@ function addToCalendar(crntEvent){
 		var events = eventsOnDay(i+1, jsondata);
 		var eventIds = eventIdsOnDay(i+1, jsondata);
 		var newTd = document.createElement("td");	
-		newTd.appendChild(document.createTextNode(months[currentMonth.month] + " " + (i+1)));
+		newTd.appendChild(document.createTextNode((i+1)));
 		newTd.appendChild(document.createElement("br"));
 		for(var j = 0; j < events.length; j++){
+			var event_color = getColor(events[j][0]);
 			var eventDiv = document.createElement("div");
+			alert("setting this alert color: " + event_color);
+			eventDiv.setAttribute("class", "alert alert-" + event_color);
+			//eventDiv.setAttribute("class", "alert alert-info");
 			var eventTagDiv = document.createElement("div");
 			var eventTimeDiv = document.createElement("div");
 			var eventTextDiv = document.createElement("div");
+			var tagIcon = document.createElement("span");
+			tagIcon.setAttribute("class", "glyphicon glyphicon-tag");
+			var tagItself = document.createTextNode(" " + events[j][0]);
+			//alert("tag color: " + getColor(events[j][0]));
+			//alert("setting this label color: " + getColor(events[j][0]));
+			//eventTagDiv.setAttribute("class", "label label-" + event_color);
 			eventTagDiv.setAttribute("class", "tag");
 			eventTimeDiv.setAttribute("class", "time");
 			eventTextDiv.setAttribute("class", "text");
-			eventTagDiv.innerHTML = events[j][0];
 			eventTimeDiv.innerHTML = events[j][1];
+
 			eventTextDiv.innerHTML = events[j][2];
-			eventDiv.appendChild(eventTagDiv);
+			eventTagDiv.appendChild(tagIcon);
+			eventTagDiv.appendChild(tagItself);
+			
 			eventDiv.appendChild(eventTimeDiv);
 			eventDiv.appendChild(eventTextDiv);
+			eventDiv.appendChild(eventTagDiv);
 			eventDiv.id = eventIds[j];
 			$(eventDiv).one("click",editEvent.bind(eventDiv));
 			newTd.appendChild(eventDiv);
@@ -262,7 +315,8 @@ function addToCalendar(crntEvent){
 		if(i==getDaysInMonth()-1){
 			for(;trIndex != 0; trIndex=(trIndex+1)%7){
 				var newTd2 = document.createElement("td");
-				newTd2.appendChild(document.createTextNode("X"));
+				newTd2.setAttribute("class", "no-date");
+				newTd2.appendChild(document.createTextNode(" "));
 				newTr.appendChild(newTd2);
 			}
 		}
@@ -276,9 +330,9 @@ function editEvent(event){
 	this.childNodes[0].hidden = true;
 	this.childNodes[1].hidden = true;
 	this.childNodes[2].hidden = true;
-	var oldTag = this.childNodes[0].innerHTML;
-	var oldTime = this.childNodes[1].innerHTML;
-	var oldEvent = this.childNodes[2].innerHTML;
+	var oldTime = this.childNodes[0].innerHTML;
+	var oldEvent = this.childNodes[1].innerHTML;
+	var oldTag = this.childNodes[2].childNodes[1];
 	var tag = document.createElement("select");
 	var genOpt = document.createElement("option");
 	genOpt.value = "General";
@@ -327,10 +381,10 @@ function editEvent(event){
 	var newEvent = document.createElement("textarea");
 	newEvent.value = oldEvent;
 	this.appendChild(newEvent);
-	var deleteButton = document.createElement("button");
-	deleteButton.innerHTML = "DELETE";
-	var editButton = document.createElement("button");
-	editButton.innerHTML = "EDIT";
+	var deleteButton = document.createElement("span");
+	deleteButton.setAttribute("class", "glyphicon glyphicon-remove-sign");
+	var editButton = document.createElement("span");
+	editButton.setAttribute("class", "glyphicon glyphicon-edit");
 	deleteButton.addEventListener("click", deleteEvent.bind(this), false);
 	editButton.addEventListener("click", confirmEdit.bind(this), false);
 	this.appendChild(deleteButton);
@@ -512,6 +566,32 @@ document.getElementById("addEvent").addEventListener("click", function(event){
 	removeDates();
 	displayDates();
 }, false);
+
+var initial= 'glyphicon-plus';
+var newimg = 'glyphicon-minus';
+
+$('[data-toggle="popover"]').click(function(){
+
+	$(this).children().switchClass(initial, newimg, 500);
+	var temp = initial;
+	initial = newimg;
+	newimg = temp;
+
+});
+
+$('[data-toggle="popover"]').popover({
+	html: true,
+	content: function(){
+		return $("#sidebar").html();
+	}
+
+}).parent().delegate('#addEvent', 'click', function(){
+	//alert("button works!");
+	//console.log($("#Event").val());
+	addEvent();
+	removeDates();
+	displayDates();
+});
 </script>
 </body>
 </html>
