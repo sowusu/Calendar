@@ -1,4 +1,22 @@
 
+#todayButton{
+
+	float: right;
+
+}
+
+#weekButton{
+
+	float: right;
+
+}
+
+.highlight{
+
+	background-color: #FF3300;
+	font-color: #ffffff;
+
+}
 
 .ctrl-btns{
 

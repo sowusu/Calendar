@@ -1,0 +1,11 @@
+Hunter Wills hwills
+Nana Owusu nowusu
+
+http://ec2-54-148-70-188.us-west-2.compute.amazonaws.com/calendar/calendar.html
+
+For our creative portion, we implemented tags (which look epic). These tags can be toggled on or off and when you create/edit an event you can choose the tag your event falls under.
+We also implemented a today button which immediately takes the user to "today". The day on the calendar will be highlighted and pressing the today button again will undo that.
+We also implemented a week view button which allows the user to do everything they could do in month view but in a week view. Pretty awesome, I know. In the week view, you will see all of the events on the given week (even if the week spans two months!).
+But wait! There's more! We also implemented bootstrap! The bootstrap we used includes css/html for the layout, javascript for the popover when adding an event and for floating elements that follow the user's screen when they scroll. Not to mention our really aweosme glyphicons, and other epic button prettyness.
+
+Please use this calendar for life. You will not regret it.

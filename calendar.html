@@ -47,10 +47,9 @@
 		<label>Month: </label><select id="Month" onchange='updateSelectedMonth(); updateDaySelect();'>
 		</select>
 
-		<label>Year: </label><input type="number" min="0" size = "5" step="1" value="2015" id="Year" onchange='updateSelectedMonth(); updateDaySelect();'>
+		<label>Year: </label><input type="number" min="0" step="1" value="2015" id="Year" onchange='updateSelectedMonth(); updateDaySelect();'>
 
-		<label>Day: </label><input type="number" size = "1" min="1" max="7" step="1" value="1" id="Day">
-		</select>
+		<label>Day: </label><input type="number" min="1" max="7" step="1" value="1" id="Day">
 
 		<label>Time: </label><select id="Time">
 		</select>
@@ -69,22 +68,34 @@
 
 			<div class="btn-group" data-toggle="buttons">
 				<label class="btn btn-default active" id="DisplayGeneral">
-				    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check"></span> General
+				    <input type="checkbox" checked> <span class = "glyphicon glyphicon-check"></span> General
 				</label>
 				<label class="btn btn-primary active" id="DisplayHome">
-				    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check"></span> Home
+				    <input type="checkbox" checked> <span class = "glyphicon glyphicon-check"></span> Home
 				</label>
 				<label class="btn btn-success active" id="DisplayWork">
-				    <input type="checkbox" autocomplete="off" checked><span class = "glyphicon glyphicon-check" ></span> Work
+				    <input type="checkbox" checked><span class = "glyphicon glyphicon-check" ></span> Work
 				</label>
 				<label class="btn btn-info active" id="DisplayPlay">
-				    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check" ></span> Play
+				    <input type="checkbox" checked> <span class = "glyphicon glyphicon-check" ></span> Play
 				</label>
 				<label class="btn btn-warning active" id="DisplayBirthdays">
-				    <input type="checkbox" autocomplete="off" checked> <span class = "glyphicon glyphicon-check" ></span> Birthdays
+				    <input type="checkbox" checked> <span class = "glyphicon glyphicon-check" ></span> Birthdays
 				</label>
 				<label class="btn btn-danger active" id="DisplaySchool">
-				    <input type="checkbox" autocomplete="off" checked><span class = "glyphicon glyphicon-check" ></span> School
+				    <input type="checkbox" checked><span class = "glyphicon glyphicon-check" ></span> School
+				</label>
+			</div>
+			
+			<div id="weekButton" data-toggle="buttons">
+				<label class="btn btn-success active" id="WeekView">
+				    <input type="checkbox"> Week View
+				</label>
+			</div>
+	
+			<div id="todayButton" data-toggle="buttons">
+				<label class="btn btn-danger active" id="Today">
+				    <input type="checkbox"> Today
 				</label>
 			</div>
 		</div>
@@ -147,6 +158,7 @@
 <script type="text/javascript">
 
 
+var inWeekView = false;
 var current_user = "";//initialize no current user
 var token;//CSRF token set at login and unset at logout
 var useGeneral = true;//tells us whether or not to display General tag
@@ -166,7 +178,6 @@ function getColor(cat_name){
 		//alert(cat_name);
 	}
 	var i;
-	var idx;
 	for (i = 0; i < cats.length; i++){
 		if (cat_name === "Home"){
 			//alert("matching " +  cats[i]);
@@ -201,7 +212,7 @@ for(var j = 0; j <= 23; j++){
 		var opt = document.createElement("option");
 		var jj = "" + j;
 		var ii = "" + i;
-		if(i==0){ii+="0";}
+		if(i===0){ii+="0";}
 		if(j<10){jj="0"+jj;}
 		opt.appendChild(document.createTextNode(jj + ":" + ii));
 		opt.setAttribute("value", (jj + ":" + ii));
@@ -229,12 +240,9 @@ updateSelectedMonth();
 updateDaySelect();
 
 var current_date = new Date();
-//var currentMonth = new Month(current_date.getFullYear(), current_date.getMonth()); //get current year and month
-var currentMonth = new Month(2015, 2);
-var startDay = getMonthStartDay();
-var jsonInfo;
-
-
+var currentMonth = new Month(current_date.getFullYear(), current_date.getMonth()); //get current year and month
+var currentWeek = new Week(currentMonth.getDateObject()); //get current week
+//var currentMonth = new Month(2015, 2);
 
 function getMonthStartDay(){
 	//get the first day of the current month
@@ -253,32 +261,21 @@ function getDaysInMonth(){
 	return currentMonth.nextMonth().getDateObject(0).getDate();
 }
 
-function addToCalendar(crntEvent){
-	//adds events for a whole month
+function addToWeekCalendar(crntEvent){
+	//adds events for a whole week
 	var newTr = document.createElement("tr");
 	newTr.setAttribute("class", "week");
-	var trIndex = 0;
 	var jsondata = JSON.parse(crntEvent);
-	var startDay = getMonthStartDay();
-	for(var i = 0; i < startDay; i++){
-		var newTd = document.createElement("td");
-		newTd.setAttribute("class", "no-date");
-		newTd.appendChild(document.createTextNode(" "));
-		newTr.appendChild(newTd);
-		trIndex++;
-	}
-	var daysInMonth = getDaysInMonth();
-	for(var i=0;i<getDaysInMonth();i++){
-		if(trIndex==0){
-			newTr = document.createElement("tr");
-			newTr.setAttribute("class", "week");
-		}
-		var events = eventsOnDay(i+1, jsondata);
-		var eventIds = eventIdsOnDay(i+1, jsondata);
+	var days = currentWeek.getDates();
+	for(var i = 0; i < 7; i++){
+		var day = days[i].getDate();
+		var events = eventsOnDay(day, jsondata);
+		var eventIds = eventIdsOnDay(day, jsondata);
 		var newTd = document.createElement("td");
 		var date_number = document.createElement("h3");	
-		date_number.innerHTML = "" + (i+1);
+		date_number.innerHTML = "" + (day);
 		newTd.appendChild(date_number);
+		newTd.id = (day);
 
 
 		newTd.appendChild(document.createElement("br"));
@@ -286,18 +283,76 @@ function addToCalendar(crntEvent){
 			//adding events for a particular date
 			var event_color = getColor(events[j][0]);
 			var eventDiv = document.createElement("div");
-			//alert("setting this alert color: " + event_color);
 			eventDiv.setAttribute("class", "alert alert-" + event_color);
-			//eventDiv.setAttribute("class", "alert alert-info");
 			var eventTagDiv = document.createElement("div");
 			var eventTimeDiv = document.createElement("div");
 			var eventTextDiv = document.createElement("div");
 			var tagIcon = document.createElement("span");
 			tagIcon.setAttribute("class", "glyphicon glyphicon-tag");
 			var tagItself = document.createTextNode(" " + events[j][0]);
-			//alert("tag color: " + getColor(events[j][0]));
-			//alert("setting this label color: " + getColor(events[j][0]));
-			//eventTagDiv.setAttribute("class", "label label-" + event_color);
+			eventTagDiv.setAttribute("class", "tag");
+			eventTimeDiv.setAttribute("class", "time");
+			eventTextDiv.setAttribute("class", "text");
+			eventTimeDiv.innerHTML = events[j][1];
+
+			eventTextDiv.innerHTML = events[j][2];
+			eventTagDiv.appendChild(tagIcon);
+			eventTagDiv.appendChild(tagItself);
+			
+			eventDiv.appendChild(eventTimeDiv);
+			eventDiv.appendChild(eventTextDiv);
+			eventDiv.appendChild(eventTagDiv);
+			eventDiv.id = eventIds[j];
+			$(eventDiv).one("click",editEvent.bind(eventDiv));
+			newTd.appendChild(eventDiv);
+			newTd.appendChild(document.createElement("br"));
+		}	
+		newTr.appendChild(newTd);
+	}
+	document.getElementById("dates").appendChild(newTr);
+}
+function addToCalendar(crntEvent){
+	//adds events for a whole month
+	var newTr = document.createElement("tr");
+	newTr.setAttribute("class", "week");
+	var trIndex = 0;
+	var jsondata = JSON.parse(crntEvent);
+	var startDay = getMonthStartDay();
+	var i;
+	var newTd;
+	for(i = 0; i < startDay; i++){
+		newTd = document.createElement("td");
+		newTd.setAttribute("class", "no-date");
+		newTd.appendChild(document.createTextNode(" "));
+		newTr.appendChild(newTd);
+		trIndex++;
+	}
+	for(i=0;i<getDaysInMonth();i++){
+		if(trIndex===0){
+			newTr = document.createElement("tr");
+			newTr.setAttribute("class", "week");
+		}
+		var events = eventsOnDay(i+1, jsondata);
+		var eventIds = eventIdsOnDay(i+1, jsondata);
+		newTd = document.createElement("td");
+		var date_number = document.createElement("h3");	
+		date_number.innerHTML = "" + (i+1);
+		newTd.appendChild(date_number);
+		newTd.id = (i+1);
+
+
+		newTd.appendChild(document.createElement("br"));
+		for(var j = 0; j < events.length; j++){
+			//adding events for a particular date
+			var event_color = getColor(events[j][0]);
+			var eventDiv = document.createElement("div");
+			eventDiv.setAttribute("class", "alert alert-" + event_color);
+			var eventTagDiv = document.createElement("div");
+			var eventTimeDiv = document.createElement("div");
+			var eventTextDiv = document.createElement("div");
+			var tagIcon = document.createElement("span");
+			tagIcon.setAttribute("class", "glyphicon glyphicon-tag");
+			var tagItself = document.createTextNode(" " + events[j][0]);
 			eventTagDiv.setAttribute("class", "tag");
 			eventTimeDiv.setAttribute("class", "time");
 			eventTextDiv.setAttribute("class", "text");
@@ -318,20 +373,20 @@ function addToCalendar(crntEvent){
 		newTr.appendChild(newTd);
 		trIndex=(trIndex+1)%7;
 		if(i==getDaysInMonth()-1){
-			for(;trIndex != 0; trIndex=(trIndex+1)%7){
+			for(;trIndex !== 0; trIndex=(trIndex+1)%7){
 				var newTd2 = document.createElement("td");
 				newTd2.setAttribute("class", "no-date");
 				newTd2.appendChild(document.createTextNode(" "));
 				newTr.appendChild(newTd2);
 			}
 		}
-		if(trIndex==0){
+		if(trIndex===0){
 			document.getElementById("dates").appendChild(newTr);
 		}
 	}
 }
 
-function editEvent(event){
+function editEvent(){
 	this.childNodes[0].hidden = true;
 	this.childNodes[1].hidden = true;
 	this.childNodes[2].hidden = true;
@@ -371,7 +426,7 @@ function editEvent(event){
 			var opt = document.createElement("option");
 			var jj = "" + j;
 			var ii = "" + i;
-			if(i==0){ii+="0";}
+			if(i===0){ii+="0";}
 			if(j<10){jj="0"+jj;}
 			var time = jj + ":" + ii;
 			if(time==oldTime){
@@ -396,28 +451,42 @@ function editEvent(event){
 	this.appendChild(editButton);
 }
 
-function deleteEvent(event){
+function deleteEvent(){
 	var id = this.id;
 	$.ajax({url:"db_delete.php",type:"POST",data:{"id":id, "token":token}});
 	setTimeout(function(){
-		removeDates();
-		displayDates();
-	},500)
+		if(inWeekView){
+			removeDates();
+			displayWeekDates();
+			updateWeek();
+		}
+		else{
+			removeDates();
+			displayDates();
+			updateMonth();
+		}
+	},500);
 }
 
-function confirmEdit(event){
+function confirmEdit(){
 	var id = this.id;
 	var eventText = this.childNodes[5].value;
 	var time = this.childNodes[4].value;
 	var tag = this.childNodes[3].value;
 	$.ajax({url:"db_edit.php",type:"POST",data:{"id":id, "tag":tag, "eventText":eventText, "time":time, "token":token}});
 	setTimeout(function(){
-		removeDates();
-		displayDates();
-	},500)
+		if(inWeekView){
+			removeDates();
+			displayWeekDates();
+			updateWeek();
+		}
+		else{
+			removeDates();
+			displayDates();
+			updateMonth();
+		}
+	},500);
 }
-
-var thisthis = 0;
 
 function eventsOnDay(day, jsondata){
 	//returns an array of events for a day in the month
@@ -425,7 +494,7 @@ function eventsOnDay(day, jsondata){
 	var arr = [];
 	for(var i=0;i<maxindex;i++){
 		var tag = jsondata[i].tag;
-		if(jsondata[i].day == day && (tag=="General" || (tag=="Home" && useHome) || (tag=="Work" && useWork) || (tag=="School" && useSchool) || (tag=="Play" && usePlay) || (tag=="Birthdays" && useBirthdays))){
+		if(jsondata[i].day == day && ((tag=="General" && useGeneral) || (tag=="Home" && useHome) || (tag=="Work" && useWork) || (tag=="School" && useSchool) || (tag=="Play" && usePlay) || (tag=="Birthdays" && useBirthdays))){
 			var subarr = [];
 			subarr.push(jsondata[i].tag);
 			subarr.push(jsondata[i].time);
@@ -441,50 +510,31 @@ function eventIdsOnDay(day, jsondata){
 	var arr = [];
 	for(var i=0;i<maxindex;i++){
 		var tag = jsondata[i].tag;
-		if(jsondata[i].day == day && (tag=="General" || (tag=="Home" && useHome) || (tag=="Work" && useWork) || (tag=="School" && useSchool) || (tag=="Play" && usePlay) || (tag=="Birthdays" && useBirthdays))){
+		if(jsondata[i].day == day && ((tag=="General" && useGeneral) || (tag=="Home" && useHome) || (tag=="Work" && useWork) || (tag=="School" && useSchool) || (tag=="Play" && usePlay) || (tag=="Birthdays" && useBirthdays))){
 			arr.push(jsondata[i].id);
 		}
 	}
 	return arr;
 }
-function displayDates(){
-	var newTr = document.createElement("tr");//NANA_added 'var' keyword
-//	newTr.setAttribute("class", "week");
-	//for(var j = day; j < daysInMonth; j++){
-		//var newTd = document.createElement("td");
-		//var day = j-i+1;
-		//newTd.appendChild(document.createTextNode(months[currentMonth.month] + " " + day));
-		getEvent(currentMonth.month, currentMonth.year);
-		//var jsondata = JSON.parse(crntEvent);
-		//alert(jsondata.maxindex);
-//	}
-//	document.getElementById("dates").appendChild(newTr);
-/*	for(var k = j-i; k < daysInMonth; k+=7){
-		var newTr2 = document.createElement("tr");
-		newTr2.setAttribute("class", "week");
-		for(var l = 0; l < 7; l++){
-			var newTd = document.createElement("td");
-			if(k+l < daysInMonth){
-				var day = k+l+1;;
-				newTd.appendChild(document.createTextNode(months[currentMonth.month] + " " + day));
-				getEvent(currentMonth.month, day, currentMonth.year);
-				if(crntEvent!=null){
-					newTd.appendChild(document.createTextNode(crntEvent));	
-				}
-			}
-			else{
-				newTd.appendChild(document.createTextNode("X"));
-			}
-			newTr2.appendChild(newTd);
-		}
-		document.getElementById("dates").appendChild(newTr2);
-	}*/
+function displayDates(){//This displays all of the events for the current month on the calendar
+	getEvent(currentMonth.month, currentMonth.year);
+}
+function displayWeekDates(){//This displays all of the events for the current week on the calendar
+	getWeekEvent();	
 }
 displayDates();
 function updateMonth(){
 	//updates month name being displayed as current month in the side bar
+	inWeekView = false;
 	var monthName = months[currentMonth.month];
 	document.getElementById("MonthName").textContent = monthName + ", " + currentMonth.year;
+}
+function updateWeek(){
+	//updates month name being displayed as current month in the side bar
+	inWeekView = true;
+	var weekFirstDay = currentWeek.getDates()[0];
+	var weekLastDay = currentWeek.getDates()[6];
+	document.getElementById("MonthName").textContent = months[weekFirstDay.getMonth()] + " " + weekFirstDay.getDate() + " - " + months[weekLastDay.getMonth()] + " " + weekLastDay.getDate();
 }
 function getEvent(month,year){
 	//get events for a whole month for a particular user
@@ -494,6 +544,21 @@ function getEvent(month,year){
 	xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	xmlHttp.addEventListener("load", ajaxCallback, false);
 	xmlHttp.send("month=" + months[month] + "&year=" + year + "&username=" + u + "&token=" + token);
+}
+function getWeekEvent(){
+	//get events for a full week for a particular user
+	var weekFirstDay = currentWeek.getDates()[0];
+	var weekLastDay = currentWeek.getDates()[6];
+	var month_one = weekFirstDay.getMonth();
+	var year_one = weekFirstDay.getFullYear();
+	var month_two = weekLastDay.getMonth();
+	var year_two = weekLastDay.getFullYear();
+	var xmlHttp = new XMLHttpRequest();
+	var u = current_user;
+	xmlHttp.open("POST", "db_week_retreive.php", true);
+	xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+	xmlHttp.addEventListener("load", ajaxWeekCallback, false);
+	xmlHttp.send("month_one=" + months[month_one] + "&year_one=" + year_one + "&month_two=" + months[month_two] + "&year_two=" + year_two+ "&username=" + u + "&token=" + token);
 }
 function addEvent(){
 	//input an event for a particular date and user into the database
@@ -509,25 +574,44 @@ function addEvent(){
 	xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 	xmlHttp.send("event=" + e + "&month=" + months[m] + "&year=" + y + "&day=" + d + "&time=" + t + "&tag=" + tag + "&username=" + u + "&token=" +token);
 }
-function ajaxCallback(event){
-	//alert( "Your file contains the text: " + event.target.responseText );
+function ajaxCallback(event){//callback for retreiving a full month's jsondata
 	var crntEvent = event.target.responseText;
-	if(current_user==""){crntEvent="{\"maxindex\":0}"};
-	//alert(crntEvent);
+	if(current_user===""){crntEvent="{\"maxindex\":0}";}
 	addToCalendar(crntEvent);
 }
+function ajaxWeekCallback(event){//callback for retreiving a full week's jsondata
+	var crntEvent = event.target.responseText;
+	if(current_user===""){crntEvent="{\"maxindex\":0}";}
+	addToWeekCalendar(crntEvent);
+}
 updateMonth();
-document.getElementById("PrevMonth").addEventListener("click", function(event){
-	currentMonth = currentMonth.prevMonth(); // Previous month would be currentMonth.prevMonth()
-	removeDates();
-	displayDates();
-	updateMonth();
+document.getElementById("PrevMonth").addEventListener("click", function(){
+	if(inWeekView){
+		currentWeek = currentWeek.prevWeek();
+		removeDates();
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		currentMonth = currentMonth.prevMonth(); // Previous month would be currentMonth.prevMonth()
+		removeDates();
+		displayDates();
+		updateMonth();
+	}
 }, false);
-document.getElementById("NextMonth").addEventListener("click", function(event){
-	currentMonth = currentMonth.nextMonth();
-	removeDates();
-	displayDates();
-	updateMonth();
+document.getElementById("NextMonth").addEventListener("click", function(){
+	if(inWeekView){
+		currentWeek = currentWeek.nextWeek();
+		removeDates();
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		currentMonth = currentMonth.nextMonth();
+		removeDates();
+		displayDates();
+		updateMonth();
+	}
 }, false);
 
 var initgen= 'glyphicon-check';
@@ -544,7 +628,7 @@ var initbirth= 'glyphicon-check';
 var newbirth = 'glyphicon-unchecked';
 
 
-document.getElementById("DisplayGeneral").addEventListener("click", function(event){
+document.getElementById("DisplayGeneral").addEventListener("click", function(){
 	$(this).children().switchClass(initgen, newgen, 0);
 	var temp = initgen;
 	initgen = newgen;
@@ -552,76 +636,163 @@ document.getElementById("DisplayGeneral").addEventListener("click", function(eve
 
 
 	useGeneral = !useGeneral;
-	removeDates();
-	displayDates();
-	updateMonth();
+	if(inWeekView){
+		removeDates();
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		removeDates();
+		displayDates();
+		updateMonth();
+	}
 }, false);
 
-document.getElementById("DisplayHome").addEventListener("click", function(event){
+document.getElementById("DisplayHome").addEventListener("click", function(){
 	$(this).children().switchClass(inithome, newhome, 0);
 	var temp = inithome;
 	inithome = newhome;
 	newhome = temp;
 
 	useHome = !useHome;
-	removeDates();
-	displayDates();
-	updateMonth();
+	if(inWeekView){
+		removeDates();
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		removeDates();
+		displayDates();
+		updateMonth();
+	}
 }, false);
 
 
-document.getElementById("DisplayWork").addEventListener("click", function(event){
+document.getElementById("DisplayWork").addEventListener("click", function(){
 	$(this).children().switchClass(initwork, newwork, 0);
 	var temp = initwork;
 	initwork = newwork;
 	newwork = temp;
 
 	useWork = !useWork;
-	removeDates();
-	displayDates();
-	updateMonth();
+	if(inWeekView){
+		removeDates();
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		removeDates();
+		displayDates();
+		updateMonth();
+	}
 }, false);
 
-document.getElementById("DisplaySchool").addEventListener("click", function(event){
+document.getElementById("DisplaySchool").addEventListener("click", function(){
 	$(this).children().switchClass(initsch, newsch, 0);
 	var temp = initsch;
 	initsch = newsch;
 	newsch = temp;
 
 	useSchool = !useSchool;
-	removeDates();
-	displayDates();
-	updateMonth();
+	if(inWeekView){
+		removeDates();
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		removeDates();
+		displayDates();
+		updateMonth();
+	}
 }, false);
 
-document.getElementById("DisplayPlay").addEventListener("click", function(event){
+document.getElementById("DisplayPlay").addEventListener("click", function(){
 	$(this).children().switchClass(initplay, newplay, 0);
 	var temp = initplay;
 	initplay = newplay;
 	newplay = temp;
 
 	usePlay = !usePlay;
-	removeDates();
-	displayDates();
-	updateMonth();
+	if(inWeekView){
+		removeDates();
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		removeDates();
+		displayDates();
+		updateMonth();
+	}
 }, false);
 
-document.getElementById("DisplayBirthdays").addEventListener("click", function(event){
+document.getElementById("DisplayBirthdays").addEventListener("click", function(){
 	$(this).children().switchClass(initbirth, newbirth, 0);
 	var temp = initbirth;
 	initbirth = newbirth;
 	newbirth = temp;
 
 	useBirthdays = !useBirthdays;
-	removeDates();
-	displayDates();
-	updateMonth();
+	if(inWeekView){
+		removeDates();
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		removeDates();
+		displayDates();
+		updateMonth();
+	}
 }, false);
 
-document.getElementById("addEvent").addEventListener("click", function(event){
+document.getElementById("addEvent").addEventListener("click", function(){
 	addEvent();
-	removeDates();
-	displayDates();
+	if(inWeekView){
+		removeDates();
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		removeDates();
+		displayDates();
+		updateMonth();
+	}
+}, false);
+
+document.getElementById("Today").addEventListener("click", function(){
+	var sel = document.getElementById("Today").childNodes[1];
+	currentMonth = new Month(current_date.getFullYear(), current_date.getMonth());
+	currentWeek = new Week(currentMonth.getDateObject(current_date.getDate()));
+	if(inWeekView){
+		removeDates();
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		removeDates();
+		displayDates();
+		updateMonth();
+	}
+	setTimeout(function(){
+		$('#'+current_date.getDate()).toggleClass("highlight", sel.checked);
+	},200);
+}, false);
+
+document.getElementById("WeekView").addEventListener("click", function(){
+	inWeekView = !inWeekView;
+	if(inWeekView){
+		document.getElementById("WeekView").childNodes[2].textContent = "Month View";
+		removeDates();
+		currentWeek = new Week(currentMonth.getDateObject(1));
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		document.getElementById("WeekView").childNodes[2].textContent = "Week View";
+		removeDates();
+		currentMonth = new Month(currentWeek.sunday.getFullYear(), currentWeek.sunday.getMonth());
+		displayDates();
+		updateMonth();	
+	}
 }, false);
 
 var initial= 'glyphicon-plus';
@@ -646,8 +817,16 @@ $('[data-toggle="popover"]').popover({
 	//alert("button works!");
 	//console.log($("#Event").val());
 	addEvent();
-	removeDates();
-	displayDates();
+	if(inWeekView){
+		removeDates();
+		displayWeekDates();
+		updateWeek();
+	}
+	else{
+		removeDates();
+		displayDates();
+		updateMonth();
+	}
 });
 
 var headertop = $("#table-options-header").offset().top;
