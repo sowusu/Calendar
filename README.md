@@ -1,5 +1,8 @@
 # Calendar
 This is a calendar web app that allows users to signup and login to their own calendars. The users are able to add, remove and tag added events.
+
+This project was a group project implemented by Hunter Wills (hwills@wustl.edu) and I.
+
 //For database creation description and other host specific definitions
 
 Database schema
